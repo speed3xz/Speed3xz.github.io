@@ -25,29 +25,6 @@
         .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e1e5e9; color: #666; font-size: 14px; }
         .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #ffffff; border-radius: 50%; border-top-color: transparent; animation: spin 1s ease-in-out infinite; margin-right: 10px; vertical-align: middle; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        
-        .debug-panel {
-            background: #2d3748;
-            color: #e2e8f0;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            font-size: 12px;
-            text-align: left;
-            display: none;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        .debug-toggle {
-            background: #4a5568;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 11px;
-            margin-top: 10px;
-        }
     </style>
 </head>
 <body>
@@ -64,16 +41,11 @@
         <button class="download-btn" id="downloadBtn">Usar Mi API</button>
         <div class="status" id="status"></div>
         
-        <div class="debug-panel" id="debugPanel">
-            <strong>Debug Info:</strong>
-            <pre id="debugContent"></pre>
-            <button class="debug-toggle" onclick="toggleDebug()">Ocultar Debug</button>
-        </div>
-        
         <div class="api-info">
             <strong>🔧 MI API:</strong> speed3xz.bot.nu<br>
-            <strong>📡 Endpoint:</strong> /api/youtube/proxy.html<br>
-            <strong>👨‍💻 Developer:</strong> Speed3xz
+            <strong>📡 Endpoint:</strong> /api/youtube/<br>
+            <strong>👨‍💻 Developer:</strong> Speed3xz<br>
+            <strong>🚀 Status:</strong> <span id="apiStatus">Verificando...</span>
         </div>
         
         <div class="footer">
@@ -84,14 +56,14 @@
     <script>
         class MyYouTubeAPI {
             constructor() {
-                this.apiBase = '/api/youtube/proxy.html';
+                this.apiBase = '/api/youtube/';
                 this.downloadBtn = document.getElementById('downloadBtn');
                 this.urlInput = document.getElementById('youtubeUrl');
                 this.statusDiv = document.getElementById('status');
-                this.debugPanel = document.getElementById('debugPanel');
-                this.debugContent = document.getElementById('debugContent');
+                this.apiStatus = document.getElementById('apiStatus');
                 
                 this.initEvents();
+                this.testAPI();
             }
             
             initEvents() {
@@ -99,10 +71,16 @@
                 this.urlInput.addEventListener('keypress', (e) => e.key === 'Enter' && this.useMyAPI());
             }
             
-            debug(log) {
-                console.log('🔧 DEBUG:', log);
-                this.debugContent.textContent += log + '\n';
-                this.debugPanel.style.display = 'block';
+            async testAPI() {
+                try {
+                    const response = await fetch(this.apiBase);
+                    const text = await response.text();
+                    this.apiStatus.innerHTML = '✅ <strong>ONLINE</strong>';
+                    this.apiStatus.style.color = 'green';
+                } catch (error) {
+                    this.apiStatus.innerHTML = '❌ OFFLINE';
+                    this.apiStatus.style.color = 'red';
+                }
             }
             
             async useMyAPI() {
@@ -114,34 +92,33 @@
                 
                 this.setLoading(true);
                 this.showStatus('🔄 Llamando a MI API...', 'loading');
-                this.debug(`Iniciando request para: ${url}`);
-                this.debug(`Video ID: ${videoId}`);
                 
                 try {
-                    const apiUrl = `${this.apiBase}?url=${encodeURIComponent(url)}`;
-                    this.debug(`API URL: ${apiUrl}`);
+                    // Usar el endpoint principal
+                    const apiUrl = `${this.apiBase}index.html?url=${encodeURIComponent(url)}`;
+                    console.log('Calling API:', apiUrl);
                     
                     const response = await fetch(apiUrl);
-                    this.debug(`Response status: ${response.status}`);
+                    const text = await response.text();
                     
-                    const responseText = await response.text();
-                    this.debug(`Raw response (primeros 500 chars): ${responseText.substring(0, 500)}`);
+                    console.log('Raw response:', text);
                     
-                    // Limpiar respuesta - remover cualquier HTML o texto extra
-                    const cleanText = this.cleanJSONResponse(responseText);
-                    this.debug(`Cleaned response: ${cleanText.substring(0, 200)}...`);
-                    
+                    // Extraer JSON del texto (puede venir con HTML alrededor)
                     let data;
                     try {
-                        data = JSON.parse(cleanText);
-                        this.debug('✅ JSON parseado correctamente');
-                    } catch (parseError) {
-                        this.debug(`❌ Error parseando JSON: ${parseError.message}`);
-                        throw new Error(`Invalid JSON response: ${parseError.message}`);
+                        // Intentar parsear directamente
+                        data = JSON.parse(text);
+                    } catch (e) {
+                        // Si falla, extraer JSON del texto
+                        const jsonMatch = text.match(/\{[\s\S]*\}/);
+                        if (jsonMatch) {
+                            data = JSON.parse(jsonMatch[0]);
+                        } else {
+                            throw new Error('No se pudo extraer JSON de la respuesta');
+                        }
                     }
                     
                     if (data.status === 'success') {
-                        this.debug(`✅ Éxito - Fuente: ${data.source}, URL: ${data.url}`);
                         this.showStatus(
                             `✅ <strong>¡MI API FUNCIONA!</strong><br>
                              🎵 <strong>Título:</strong> ${data.title}<br>
@@ -150,30 +127,21 @@
                             'success'
                         );
                         
+                        // Descargar el archivo
                         setTimeout(() => {
                             this.downloadFile(data.url, data.title || `audio_${videoId}`);
                         }, 1000);
                         
                     } else {
-                        this.debug(`❌ Error de API: ${data.error}`);
-                        this.showStatus(`❌ Error: ${data.error}`, 'error');
+                        this.showStatus(`❌ Error: ${data.error || data.message}`, 'error');
                     }
                     
                 } catch (error) {
-                    this.debug(`❌ Error general: ${error.message}`);
                     this.showStatus(`❌ Error: ${error.message}`, 'error');
+                    console.error('Error completo:', error);
                 } finally {
                     this.setLoading(false);
                 }
-            }
-            
-            cleanJSONResponse(text) {
-                // Intentar extraer JSON del texto
-                const jsonMatch = text.match(/\{[\s\S]*\}/);
-                if (jsonMatch) {
-                    return jsonMatch[0];
-                }
-                return text;
             }
             
             extractVideoId(url) {
@@ -191,7 +159,7 @@
             }
             
             downloadFile(url, filename) {
-                this.debug(`Iniciando descarga: ${url}`);
+                console.log('Downloading:', url);
                 
                 const link = document.createElement('a');
                 link.href = url;
@@ -201,8 +169,6 @@
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                
-                this.debug('✅ Descarga iniciada');
             }
             
             sanitizeFilename(filename) {
@@ -224,14 +190,9 @@
             }
         }
         
-        function toggleDebug() {
-            const panel = document.getElementById('debugPanel');
-            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-        }
-        
         // Inicializar
         document.addEventListener('DOMContentLoaded', () => {
-            window.api = new MyYouTubeAPI();
+            new MyYouTubeAPI();
         });
     </script>
 </body>
