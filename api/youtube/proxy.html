@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>YouTube API Proxy</title>
+    <script>
+        // API simple que devuelve JSON puro - Speed3xz
+        const API_SOURCES = [
+            {
+                name: 'SkyAPI',
+                url: (id) => `https://api-sky.ultraplus.click/api/download/yt.php?url=https://youtu.be/${id}&format=audio`,
+                headers: { 
+                    'Authorization': 'Bearer Russellxz',
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                },
+                extractor: (data) => data?.data?.audio || data?.data?.video || data?.audio
+            },
+            {
+                name: 'RubyCore', 
+                url: (id) => `https://ruby-core.vercel.app/api/download/youtube/mp3?url=https://youtu.be/${id}`,
+                extractor: (data) => data?.url || data?.audioUrl
+            },
+            {
+                name: 'Adonix',
+                url: (id) => `https://api-adonix.ultraplus.click/download/ytmp3?url=https://youtu.be/${id}`,
+                extractor: (data) => data?.data?.url || data?.url
+            }
+        ];
+
+        async function init() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const youtubeUrl = urlParams.get('url');
+            
+            if (!youtubeUrl) {
+                return sendJSON({
+                    status: 'error',
+                    error: 'Missing URL parameter',
+                    usage: '?url=YOUTUBE_URL'
+                });
+            }
+
+            try {
+                const videoId = extractVideoId(youtubeUrl);
+                if (!videoId) {
+                    throw new Error('Invalid YouTube URL');
+                }
+
+                const result = await getAudioFromSources(videoId);
+                sendJSON(result);
+            } catch (error) {
+                sendJSON({
+                    status: 'error',
+                    error: error.message
+                });
+            }
+        }
+
+        async function getAudioFromSources(videoId) {
+            for (const source of API_SOURCES) {
+                try {
+                    console.log(`Trying ${source.name}...`);
+                    const response = await fetch(source.url(videoId), {
+                        headers: source.headers,
+                        signal: AbortSignal.timeout(8000)
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        const audioUrl = source.extractor(data);
+                        
+                        if (audioUrl && isValidUrl(audioUrl)) {
+                            return {
+                                status: 'success',
+                                url: audioUrl,
+                                title: data.title || data.data?.title || `Audio ${videoId}`,
+                                source: source.name,
+                                videoId: videoId,
+                                timestamp: new Date().toISOString()
+                            };
+                        }
+                    }
+                } catch (error) {
+                    console.log(`${source.name} failed:`, error.message);
+                    continue;
+                }
+            }
+            throw new Error('All sources failed');
+        }
+
+        function extractVideoId(url) {
+            const regex = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/;
+            const match = url.match(regex);
+            return match ? match[1] : null;
+        }
+
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        function sendJSON(data) {
+            // Limpiar completamente el documento y escribir solo JSON
+            document.open();
+            document.write(JSON.stringify(data, null, 2));
+            document.close();
+        }
+
+        // Ejecutar inmediatamente
+        init();
+    </script>
+</head>
+<body>
+    <!-- Este contenido será reemplazado por JSON -->
+    Loading API...
+</body>
+</html>
