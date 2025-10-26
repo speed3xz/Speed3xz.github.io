@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Audio Downloader - Speed3xz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: white;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .url-input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .url-input::placeholder {
+            color: #999;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            width: 100%;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .download-btn:active {
+            transform: translateY(0);
+        }
+
+        .download-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .status.loading {
+            background: #cce7ff;
+            color: #004085;
+            border: 1px solid #b3d7ff;
+            display: block;
+        }
+
+        .examples {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .examples h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .example-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .example-link {
+            color: #667eea;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+            font-size: 14px;
+            word-break: break-all;
+        }
+
+        .example-link:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5e9;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .api-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🎵</div>
+        
+        <h1>YouTube Audio</h1>
+        <p class="subtitle">Descarga audios de YouTube al instante</p>
+        
+        <div class="input-group">
+            <input 
+                type="url" 
+                class="url-input" 
+                placeholder="https://www.youtube.com/watch?v=..." 
+                id="youtubeUrl"
+            >
+        </div>
+        
+        <button class="download-btn" id="downloadBtn">
+            Descargar Audio
+        </button>
+        
+        <div class="status" id="status"></div>
+        
+        <div class="examples">
+            <h3>Ejemplos para probar:</h3>
+            <div class="example-links">
+                <a href="#" class="example-link" data-url="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+                    🎵 Rick Astley - Never Gonna Give You Up
+                </a>
+                <a href="#" class="example-link" data-url="https://www.youtube.com/watch?v=JGwWNGJdvx8">
+                    🎵 Ed Sheeran - Shape of You
+                </a>
+                <a href="#" class="example-link" data-url="https://www.youtube.com/watch?v=kJQP7kiw5Fk">
+                    🎵 Luis Fonsi - Despacito ft. Daddy Yankee
+                </a>
+            </div>
+        </div>
+        
+        <div class="api-info">
+            <strong>API:</strong> speed3xz.bot.nu<br>
+            <strong>Endpoint:</strong> /api/youtube/audio.js<br>
+            <strong>Desarrollador:</strong> Speed3xz
+        </div>
+        
+        <div class="footer">
+            © 2024 Speed3xz - Todos los derechos reservados
+        </div>
+    </div>
+
+    <script>
+        class YouTubeAudioDownloader {
+            constructor() {
+                this.apiBase = 'https://speed3xz.bot.nu/api/youtube';
+                this.downloadBtn = document.getElementById('downloadBtn');
+                this.urlInput = document.getElementById('youtubeUrl');
+                this.statusDiv = document.getElementById('status');
+                
+                this.initEvents();
+            }
+            
+            initEvents() {
+                this.downloadBtn.addEventListener('click', () => this.downloadAudio());
+                
+                this.urlInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.downloadAudio();
+                    }
+                });
+                
+                // Ejemplos
+                document.querySelectorAll('.example-link').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.urlInput.value = e.target.getAttribute('data-url');
+                        this.downloadAudio();
+                    });
+                });
+            }
+            
+            async downloadAudio() {
+                const url = this.urlInput.value.trim();
+                
+                if (!url) {
+                    this.showStatus('Por favor, ingresa una URL de YouTube', 'error');
+                    return;
+                }
+                
+                if (!this.isValidYouTubeUrl(url)) {
+                    this.showStatus('URL de YouTube inválida', 'error');
+                    return;
+                }
+                
+                this.setLoading(true);
+                this.showStatus('Conectando con la API...', 'loading');
+                
+                try {
+                    const audioData = await this.fetchAudio(url);
+                    
+                    if (audioData.success) {
+                        this.showStatus(
+                            `✅ Audio listo! Fuente: ${audioData.source}<br>Descargando...`, 
+                            'success'
+                        );
+                        this.downloadFile(audioData.url, audioData.title);
+                    } else {
+                        this.showStatus('❌ Error: ' + audioData.error, 'error');
+                    }
+                    
+                } catch (error) {
+                    this.showStatus('❌ Error de conexión: ' + error.message, 'error');
+                    console.error('Error:', error);
+                } finally {
+                    this.setLoading(false);
+                }
+            }
+            
+            async fetchAudio(youtubeUrl) {
+                const apiUrl = `${this.apiBase}/audio.js?url=${encodeURIComponent(youtubeUrl)}`;
+                
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    return {
+                        success: true,
+                        url: data.url,
+                        title: data.title || 'audio',
+                        source: data.source,
+                        videoId: data.videoId
+                    };
+                } else {
+                    return {
+                        success: false,
+                        error: data.error
+                    };
+                }
+            }
+            
+            downloadFile(url, filename) {
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `${this.sanitizeFilename(filename)}.mp3`;
+                link.target = '_blank';
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+            
+            sanitizeFilename(filename) {
+                return filename.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            }
+            
+            isValidYouTubeUrl(url) {
+                const regex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+                return regex.test(url);
+            }
+            
+            setLoading(loading) {
+                if (loading) {
+                    this.downloadBtn.innerHTML = '<span class="loading-spinner"></span>Procesando...';
+                    this.downloadBtn.disabled = true;
+                } else {
+                    this.downloadBtn.innerHTML = 'Descargar Audio';
+                    this.downloadBtn.disabled = false;
+                }
+            }
+            
+            showStatus(message, type) {
+                this.statusDiv.textContent = '';
+                this.statusDiv.innerHTML = message;
+                this.statusDiv.className = `status ${type}`;
+                
+                if (type !== 'loading') {
+                    setTimeout(() => {
+                        this.statusDiv.style.display = 'none';
+                    }, 5000);
+                }
+            }
+        }
+        
+        // Inicializar la aplicación cuando se carga la página
+        document.addEventListener('DOMContentLoaded', () => {
+            new YouTubeAudioDownloader();
+        });
+        
+        // Función global para uso externo
+        window.YouTubeAudioDownloader = YouTubeAudioDownloader;
+    </script>
+</body>
+</html>
