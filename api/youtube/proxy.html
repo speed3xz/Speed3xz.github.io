@@ -2,34 +2,46 @@
 <html>
 <head>
     <title>YouTube API Proxy - Speed3xz</title>
+    <style>
+        body { 
+            display: none !important; 
+        }
+    </style>
     <script>
+        // YouTube API Proxy - By Speed3xz
+        // Esta API funciona como proxy para múltiples fuentes de YouTube
+        
         class YouTubeAPIProxy {
             constructor() {
-                this.handleRequest();
+                this.init();
             }
 
-            async handleRequest() {
+            async init() {
+                try {
+                    const result = await this.processRequest();
+                    this.returnPureJSON(result);
+                } catch (error) {
+                    this.returnPureJSON({
+                        status: 'error',
+                        error: error.message
+                    });
+                }
+            }
+
+            async processRequest() {
                 const urlParams = new URLSearchParams(window.location.search);
                 const youtubeUrl = urlParams.get('url');
-                const callback = urlParams.get('callback');
                 
                 if (!youtubeUrl) {
-                    this.returnError('Missing YouTube URL parameter');
-                    return;
+                    throw new Error('Missing YouTube URL parameter. Usage: ?url=YOUTUBE_URL');
                 }
 
-                try {
-                    const videoId = this.extractVideoId(youtubeUrl);
-                    if (!videoId) {
-                        throw new Error('Invalid YouTube URL');
-                    }
-
-                    const result = await this.getAudioFromSources(videoId);
-                    this.returnSuccess(result, callback);
-                    
-                } catch (error) {
-                    this.returnError(error.message, callback);
+                const videoId = this.extractVideoId(youtubeUrl);
+                if (!videoId) {
+                    throw new Error('Invalid YouTube URL format');
                 }
+
+                return await this.getAudioFromSources(videoId);
             }
 
             async getAudioFromSources(videoId) {
@@ -41,97 +53,119 @@
                             'Authorization': 'Bearer Russellxz',
                             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
                         },
-                        extractor: (data) => data?.data?.audio || data?.data?.video
+                        extractor: (data) => data?.data?.audio || data?.data?.video || data?.audio
                     },
                     {
                         name: 'RubyCore', 
                         url: `https://ruby-core.vercel.app/api/download/youtube/mp3?url=https://youtu.be/${videoId}`,
-                        extractor: (data) => data?.url
+                        extractor: (data) => data?.url || data?.audioUrl
                     },
                     {
                         name: 'Adonix',
                         url: `https://api-adonix.ultraplus.click/download/ytmp3?url=https://youtu.be/${videoId}`,
-                        extractor: (data) => data?.data?.url
+                        extractor: (data) => data?.data?.url || data?.url
+                    },
+                    {
+                        name: 'MayAPI',
+                        url: `https://mayapi.ooguy.com/ytdl?url=https://youtu.be/${videoId}&type=mp3`,
+                        extractor: (data) => data?.result?.url || data?.url
                     }
                 ];
 
-                for (const api of apis) {
+                // Probar todas las APIs en paralelo
+                const promises = apis.map(async (api) => {
                     try {
-                        console.log(`🔄 Trying ${api.name}...`);
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 8000);
+                        
                         const response = await fetch(api.url, {
                             headers: api.headers,
-                            signal: AbortSignal.timeout(8000)
+                            signal: controller.signal
                         });
                         
-                        if (response.ok) {
-                            const data = await response.json();
-                            const audioUrl = api.extractor(data);
-                            
-                            if (audioUrl) {
-                                return {
-                                    url: audioUrl,
-                                    title: data.title || data.data?.title || `Audio ${videoId}`,
-                                    source: api.name,
-                                    videoId: videoId
-                                };
-                            }
+                        clearTimeout(timeoutId);
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}`);
+                        }
+                        
+                        const data = await response.json();
+                        const audioUrl = api.extractor(data);
+                        
+                        if (audioUrl && this.isValidUrl(audioUrl)) {
+                            return {
+                                success: true,
+                                source: api.name,
+                                url: audioUrl,
+                                title: data.title || data.data?.title || `Audio ${videoId}`,
+                                videoId: videoId
+                            };
+                        } else {
+                            throw new Error('No valid audio URL found');
                         }
                     } catch (error) {
-                        console.log(`❌ ${api.name} failed:`, error.message);
-                        continue;
+                        return {
+                            success: false,
+                            source: api.name,
+                            error: error.message
+                        };
                     }
+                });
+
+                const results = await Promise.all(promises);
+                const successful = results.find(r => r.success);
+                
+                if (successful) {
+                    return {
+                        status: 'success',
+                        url: successful.url,
+                        title: successful.title,
+                        source: successful.source,
+                        videoId: successful.videoId,
+                        timestamp: new Date().toISOString(),
+                        domain: 'speed3xz.bot.nu'
+                    };
+                } else {
+                    const errors = results.map(r => `${r.source}: ${r.error}`).join(', ');
+                    throw new Error(`All APIs failed: ${errors}`);
                 }
-                throw new Error('All APIs failed to provide audio');
             }
 
             extractVideoId(url) {
-                const regex = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([a-zA-Z0-9_-]{11})/;
+                const regex = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/;
                 const match = url.match(regex);
                 return match ? match[1] : null;
             }
 
-            returnSuccess(data, callback) {
-                const response = {
-                    status: 'success',
-                    url: data.url,
-                    title: data.title,
-                    source: data.source,
-                    videoId: data.videoId,
-                    timestamp: new Date().toISOString(),
-                    domain: 'speed3xz.bot.nu'
-                };
-
-                if (callback) {
-                    // JSONP response
-                    document.write(`${callback}(${JSON.stringify(response)})`);
-                } else {
-                    // JSON response
-                    document.write(JSON.stringify(response, null, 2));
+            isValidUrl(string) {
+                try {
+                    new URL(string);
+                    return true;
+                } catch (_) {
+                    return false;
                 }
             }
 
-            returnError(message, callback) {
-                const response = {
-                    status: 'error',
-                    error: message,
-                    timestamp: new Date().toISOString()
-                };
-
-                if (callback) {
-                    document.write(`${callback}(${JSON.stringify(response)})`);
-                } else {
-                    document.write(JSON.stringify(response, null, 2));
-                }
+            returnPureJSON(data) {
+                // Limpiar todo el documento y escribir solo JSON
+                document.open();
+                document.write(JSON.stringify(data, null, 2));
+                document.close();
+                
+                // También establecer content-type via meta tag
+                const meta = document.createElement('meta');
+                meta.httpEquiv = 'Content-Type';
+                meta.content = 'application/json; charset=utf-8';
+                document.head.appendChild(meta);
             }
         }
 
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            new YouTubeAPIProxy();
-        });
+        // Inicializar inmediatamente
+        new YouTubeAPIProxy();
     </script>
 </head>
 <body>
+    <!-- Este contenido será reemplazado por JSON puro -->
     <noscript>
         {"status": "error", "error": "JavaScript required for this API"}
     </noscript>
