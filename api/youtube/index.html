@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>YouTube API - Speed3xz</title>
+    <script src="api.js"></script>
+    <script>
+        // Procesar parámetros de URL y devolver JSON
+        async function handleAPIRequest() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const youtubeUrl = urlParams.get('url');
+            const callback = urlParams.get('callback'); // Para JSONP
+            
+            if (!youtubeUrl) {
+                return sendResponse({
+                    status: 'error',
+                    error: 'Missing YouTube URL parameter',
+                    usage: '?url=YOUTUBE_URL'
+                }, callback);
+            }
+
+            try {
+                const api = new Speed3xzYouTubeAPI();
+                const result = await api.getAudio(youtubeUrl);
+                sendResponse(result, callback);
+            } catch (error) {
+                sendResponse({
+                    status: 'error',
+                    error: error.message
+                }, callback);
+            }
+        }
+
+        function sendResponse(data, callback) {
+            const jsonData = JSON.stringify(data, null, 2);
+            
+            if (callback) {
+                // JSONP response
+                document.write(`<script>${callback}(${jsonData})<\/script>`);
+            } else {
+                // JSON response - limpiar todo y escribir solo JSON
+                document.write(`<pre>${jsonData}</pre>`);
+                // También establecer como texto plano para fetch
+                document.body.innerHTML = jsonData;
+            }
+        }
+
+        // Ejecutar cuando se carga la página
+        document.addEventListener('DOMContentLoaded', handleAPIRequest);
+    </script>
+    <style>
+        body { 
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- El contenido se genera dinámicamente -->
+    Loading YouTube API...
+</body>
+</html>
