@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YouTube API Proxy - Speed3xz</title>
+    <script>
+        class YouTubeAPIProxy {
+            constructor() {
+                this.handleRequest();
+            }
+
+            async handleRequest() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const youtubeUrl = urlParams.get('url');
+                const callback = urlParams.get('callback');
+                
+                if (!youtubeUrl) {
+                    this.returnError('Missing YouTube URL parameter');
+                    return;
+                }
+
+                try {
+                    const videoId = this.extractVideoId(youtubeUrl);
+                    if (!videoId) {
+                        throw new Error('Invalid YouTube URL');
+                    }
+
+                    const result = await this.getAudioFromSources(videoId);
+                    this.returnSuccess(result, callback);
+                    
+                } catch (error) {
+                    this.returnError(error.message, callback);
+                }
+            }
+
+            async getAudioFromSources(videoId) {
+                const apis = [
+                    {
+                        name: 'SkyAPI',
+                        url: `https://api-sky.ultraplus.click/api/download/yt.php?url=https://youtu.be/${videoId}&format=audio`,
+                        headers: { 
+                            'Authorization': 'Bearer Russellxz',
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                        },
+                        extractor: (data) => data?.data?.audio || data?.data?.video
+                    },
+                    {
+                        name: 'RubyCore', 
+                        url: `https://ruby-core.vercel.app/api/download/youtube/mp3?url=https://youtu.be/${videoId}`,
+                        extractor: (data) => data?.url
+                    },
+                    {
+                        name: 'Adonix',
+                        url: `https://api-adonix.ultraplus.click/download/ytmp3?url=https://youtu.be/${videoId}`,
+                        extractor: (data) => data?.data?.url
+                    }
+                ];
+
+                for (const api of apis) {
+                    try {
+                        console.log(`🔄 Trying ${api.name}...`);
+                        const response = await fetch(api.url, {
+                            headers: api.headers,
+                            signal: AbortSignal.timeout(8000)
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            const audioUrl = api.extractor(data);
+                            
+                            if (audioUrl) {
+                                return {
+                                    url: audioUrl,
+                                    title: data.title || data.data?.title || `Audio ${videoId}`,
+                                    source: api.name,
+                                    videoId: videoId
+                                };
+                            }
+                        }
+                    } catch (error) {
+                        console.log(`❌ ${api.name} failed:`, error.message);
+                        continue;
+                    }
+                }
+                throw new Error('All APIs failed to provide audio');
+            }
+
+            extractVideoId(url) {
+                const regex = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([a-zA-Z0-9_-]{11})/;
+                const match = url.match(regex);
+                return match ? match[1] : null;
+            }
+
+            returnSuccess(data, callback) {
+                const response = {
+                    status: 'success',
+                    url: data.url,
+                    title: data.title,
+                    source: data.source,
+                    videoId: data.videoId,
+                    timestamp: new Date().toISOString(),
+                    domain: 'speed3xz.bot.nu'
+                };
+
+                if (callback) {
+                    // JSONP response
+                    document.write(`${callback}(${JSON.stringify(response)})`);
+                } else {
+                    // JSON response
+                    document.write(JSON.stringify(response, null, 2));
+                }
+            }
+
+            returnError(message, callback) {
+                const response = {
+                    status: 'error',
+                    error: message,
+                    timestamp: new Date().toISOString()
+                };
+
+                if (callback) {
+                    document.write(`${callback}(${JSON.stringify(response)})`);
+                } else {
+                    document.write(JSON.stringify(response, null, 2));
+                }
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new YouTubeAPIProxy();
+        });
+    </script>
+</head>
+<body>
+    <noscript>
+        {"status": "error", "error": "JavaScript required for this API"}
+    </noscript>
+</body>
+</html>
