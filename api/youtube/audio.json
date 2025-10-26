@@ -1,0 +1,10 @@
+{
+  "status": "success", 
+  "message": "🚀 YouTube Audio API - By Speed3xz",
+  "endpoint": "/api/youtube/proxy.html",
+  "usage": "GET /api/youtube/proxy.html?url=YOUTUBE_URL&format=audio",
+  "sources": ["SkyAPI", "RubyCore", "Adonix"],
+  "developer": "Speed3xz",
+  "domain": "speed3xz.bot.nu",
+  "version": "1.0.0"
+}
