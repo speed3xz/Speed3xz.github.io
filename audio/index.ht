@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Audio - Speed3xz API</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .container { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 20px; padding: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; }
+        .logo { width: 80px; height: 80px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 2em; color: white; }
+        h1 { color: #333; margin-bottom: 10px; font-size: 2.2em; font-weight: 700; }
+        .subtitle { color: #666; margin-bottom: 30px; font-size: 1.1em; }
+        .input-group { margin-bottom: 25px; }
+        .url-input { width: 100%; padding: 16px 20px; border: 2px solid #e1e5e9; border-radius: 12px; font-size: 16px; transition: all 0.3s ease; background: #f8f9fa; }
+        .url-input:focus { outline: none; border-color: #667eea; background: white; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+        .download-btn { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 16px 40px; border-radius: 50px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(102,126,234,0.3); width: 100%; }
+        .download-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(102,126,234,0.4); }
+        .download-btn:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
+        .status { margin-top: 20px; padding: 15px; border-radius: 12px; font-size: 14px; display: none; }
+        .status.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; display: block; }
+        .status.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; display: block; }
+        .status.loading { background: #cce7ff; color: #004085; border: 1px solid #b3d7ff; display: block; }
+        .api-info { background: #f8f9fa; padding: 15px; border-radius: 12px; margin-top: 20px; font-size: 12px; color: #666; }
+        .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e1e5e9; color: #666; font-size: 14px; }
+        .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #ffffff; border-radius: 50%; border-top-color: transparent; animation: spin 1s ease-in-out infinite; margin-right: 10px; vertical-align: middle; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .debug-panel {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 12px;
+            text-align: left;
+            display: none;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .debug-toggle {
+            background: #4a5568;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🎵</div>
+        <h1>Mi YouTube API</h1>
+        <p class="subtitle">Powered by speed3xz.bot.nu</p>
+        
+        <div class="input-group">
+            <input type="url" class="url-input" placeholder="https://www.youtube.com/watch?v=..." 
+                   id="youtubeUrl" value="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+        </div>
+        
+        <button class="download-btn" id="downloadBtn">Usar Mi API</button>
+        <div class="status" id="status"></div>
+        
+        <div class="debug-panel" id="debugPanel">
+            <strong>Debug Info:</strong>
+            <pre id="debugContent"></pre>
+            <button class="debug-toggle" onclick="toggleDebug()">Ocultar Debug</button>
+        </div>
+        
+        <div class="api-info">
+            <strong>🔧 MI API:</strong> speed3xz.bot.nu<br>
+            <strong>📡 Endpoint:</strong> /api/youtube/proxy.html<br>
+            <strong>👨‍💻 Developer:</strong> Speed3xz
+        </div>
+        
+        <div class="footer">
+            ✅ ¡API 100% Funcional!
+        </div>
+    </div>
+
+    <script>
+        class MyYouTubeAPI {
+            constructor() {
+                this.apiBase = '/api/youtube/proxy.html';
+                this.downloadBtn = document.getElementById('downloadBtn');
+                this.urlInput = document.getElementById('youtubeUrl');
+                this.statusDiv = document.getElementById('status');
+                this.debugPanel = document.getElementById('debugPanel');
+                this.debugContent = document.getElementById('debugContent');
+                
+                this.initEvents();
+            }
+            
+            initEvents() {
+                this.downloadBtn.addEventListener('click', () => this.useMyAPI());
+                this.urlInput.addEventListener('keypress', (e) => e.key === 'Enter' && this.useMyAPI());
+            }
+            
+            debug(log) {
+                console.log('🔧 DEBUG:', log);
+                this.debugContent.textContent += log + '\n';
+                this.debugPanel.style.display = 'block';
+            }
+            
+            async useMyAPI() {
+                const url = this.urlInput.value.trim();
+                if (!url) return this.showStatus('❌ Ingresa URL de YouTube', 'error');
+                
+                const videoId = this.extractVideoId(url);
+                if (!videoId) return this.showStatus('❌ URL de YouTube inválida', 'error');
+                
+                this.setLoading(true);
+                this.showStatus('🔄 Llamando a MI API...', 'loading');
+                this.debug(`Iniciando request para: ${url}`);
+                this.debug(`Video ID: ${videoId}`);
+                
+                try {
+                    const apiUrl = `${this.apiBase}?url=${encodeURIComponent(url)}`;
+                    this.debug(`API URL: ${apiUrl}`);
+                    
+                    const response = await fetch(apiUrl);
+                    this.debug(`Response status: ${response.status}`);
+                    
+                    const responseText = await response.text();
+                    this.debug(`Raw response (primeros 500 chars): ${responseText.substring(0, 500)}`);
+                    
+                    // Limpiar respuesta - remover cualquier HTML o texto extra
+                    const cleanText = this.cleanJSONResponse(responseText);
+                    this.debug(`Cleaned response: ${cleanText.substring(0, 200)}...`);
+                    
+                    let data;
+                    try {
+                        data = JSON.parse(cleanText);
+                        this.debug('✅ JSON parseado correctamente');
+                    } catch (parseError) {
+                        this.debug(`❌ Error parseando JSON: ${parseError.message}`);
+                        throw new Error(`Invalid JSON response: ${parseError.message}`);
+                    }
+                    
+                    if (data.status === 'success') {
+                        this.debug(`✅ Éxito - Fuente: ${data.source}, URL: ${data.url}`);
+                        this.showStatus(
+                            `✅ <strong>¡MI API FUNCIONA!</strong><br>
+                             🎵 <strong>Título:</strong> ${data.title}<br>
+                             🔧 <strong>Fuente:</strong> ${data.source}<br>
+                             ⬇️ <strong>Descargando audio...</strong>`, 
+                            'success'
+                        );
+                        
+                        setTimeout(() => {
+                            this.downloadFile(data.url, data.title || `audio_${videoId}`);
+                        }, 1000);
+                        
+                    } else {
+                        this.debug(`❌ Error de API: ${data.error}`);
+                        this.showStatus(`❌ Error: ${data.error}`, 'error');
+                    }
+                    
+                } catch (error) {
+                    this.debug(`❌ Error general: ${error.message}`);
+                    this.showStatus(`❌ Error: ${error.message}`, 'error');
+                } finally {
+                    this.setLoading(false);
+                }
+            }
+            
+            cleanJSONResponse(text) {
+                // Intentar extraer JSON del texto
+                const jsonMatch = text.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                    return jsonMatch[0];
+                }
+                return text;
+            }
+            
+            extractVideoId(url) {
+                const patterns = [
+                    /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+                    /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+                    /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/
+                ];
+                
+                for (const pattern of patterns) {
+                    const match = url.match(pattern);
+                    if (match) return match[1];
+                }
+                return null;
+            }
+            
+            downloadFile(url, filename) {
+                this.debug(`Iniciando descarga: ${url}`);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `${this.sanitizeFilename(filename)}.mp3`;
+                link.target = '_blank';
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                this.debug('✅ Descarga iniciada');
+            }
+            
+            sanitizeFilename(filename) {
+                return filename
+                    .replace(/[^a-z0-9áéíóúñü\s]/gi, '_')
+                    .replace(/\s+/g, '_')
+                    .substring(0, 50);
+            }
+            
+            setLoading(loading) {
+                this.downloadBtn.innerHTML = loading ? 
+                    '<span class="loading-spinner"></span>Procesando...' : 'Usar Mi API';
+                this.downloadBtn.disabled = loading;
+            }
+            
+            showStatus(message, type) {
+                this.statusDiv.innerHTML = message;
+                this.statusDiv.className = `status ${type}`;
+            }
+        }
+        
+        function toggleDebug() {
+            const panel = document.getElementById('debugPanel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            window.api = new MyYouTubeAPI();
+        });
+    </script>
+</body>
+</html>
