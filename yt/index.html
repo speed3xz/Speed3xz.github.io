@@ -263,7 +263,7 @@
             height: 20px;
             animation: spin 1s linear infinite;
             margin-left: 10px;
-            display: inline-block; /* Ocultar/Mostrar con JS */
+            display: inline-block;
         }
 
         @keyframes spin {
@@ -292,7 +292,7 @@
             border: 1px solid var(--primary);
         }
 
-        /* Footer y Responsive (se mantienen igual) */
+        /* Footer y Responsive */
         footer {
             background: var(--dark-light);
             padding: 60px 0 30px;
@@ -305,9 +305,6 @@
             flex-direction: column;
             align-items: center;
             gap: 30px;
-        }
-        .footer-logo, .social-links, .copyright {
-            /* estilos */
         }
         
         @media (max-width: 768px) {
@@ -342,7 +339,7 @@
                 
                 <div class="download-form">
                     <div class="input-group">
-                        <input type="text" id="ytUrl" placeholder="Pega el link o nombre del video de YouTube aquí..." required>
+                        <input type="text" id="ytUrl" placeholder="Pega el link o nombre del video de YouTube aquí..." required value="https://youtu.be/Hf-2ytUtI5o">
                         <button id="checkUrl" class="btn btn-check">
                             <i class="fas fa-search"></i> Verificar
                         </button>
@@ -406,9 +403,6 @@
     </footer>
     
     <script>
-        // *** IMPORTANTE: La lógica de la API (fetch a melody.ultraplus.click)
-        // DEBE ejecutarse en tu servidor (Backend Node.js/Express)
-        
         document.addEventListener('DOMContentLoaded', function() {
             const ytUrlInput = document.getElementById('ytUrl');
             const checkUrlBtn = document.getElementById('checkUrl');
@@ -419,18 +413,20 @@
             const messageDiv = document.getElementById('message');
             const resultsDiv = document.getElementById('results');
             
-            // Reemplaza esta URL con la ruta REAL de tu servidor (Backend)
+            // Expresión regular que detecta links de YouTube (incluyendo youtu.be)
+            const youtubeRegexID = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([a-zA-Z0-9_-]{11})/;
+
+            // Reemplaza estas URLs con las rutas REALES de tu servidor (Backend Node.js/Express)
             const BACKEND_METADATA_ENDPOINT = '/api/get-metadata'; 
             const BACKEND_DOWNLOAD_ENDPOINT = '/api/download'; 
 
-            let videoMetadata = null; // Almacena los datos del video actual
+            let videoMetadata = null; 
             
             function showMessage(msg, type) {
                 messageDiv.textContent = msg;
                 messageDiv.className = `alert alert-${type}`;
                 messageDiv.style.display = 'block';
                 loadingDiv.style.display = 'none';
-                resultsDiv.style.display = 'none';
             }
 
             function resetState() {
@@ -453,17 +449,28 @@
                 loadingText.textContent = 'Buscando metadatos...';
                 loadingDiv.style.display = 'block';
                 checkUrlBtn.disabled = true;
-
+                
+                // Determina si es un URL o un texto de búsqueda
+                const match = url.match(youtubeRegexID);
+                let queryParam = url;
+                if (match) {
+                    // Si es un link de YT, usa el link completo como query, el backend lo resolverá
+                    queryParam = url; 
+                }
+                
                 try {
-                    // LLamada al Backend para obtener Metadatos (usando yt-search/yts)
-                    const response = await fetch(`${BACKEND_METADATA_ENDPOINT}?query=${encodeURIComponent(url)}`);
+                    // LLamada al Backend para obtener Metadatos (tu servidor debe usar yt-search)
+                    const response = await fetch(`${BACKEND_METADATA_ENDPOINT}?query=${encodeURIComponent(queryParam)}`);
                     const data = await response.json();
                     
                     if (!response.ok || data.error) {
-                        throw new Error(data.error || `Error al buscar los metadatos. Verifique el link.`);
+                        // El error "The string did not match the expected pattern" probablemente viene de aquí.
+                        // Usamos el mensaje de error de tu servidor si está disponible.
+                        throw new Error(data.error || `Error: ${response.statusText}.`);
                     }
                     
-                    videoMetadata = data.metadata; // Asume que tu backend devuelve { metadata: { title, thumbnail, url, ... } }
+                    // Asume que tu backend devuelve { metadata: { title, thumbnail, url, duration, author } }
+                    videoMetadata = data.metadata; 
                     
                     // Mostrar vista previa
                     document.getElementById('thumbnail').src = videoMetadata.thumbnail;
@@ -480,6 +487,7 @@
 
                 } catch (error) {
                     console.error('Metadata Error:', error);
+                    // Aquí se muestra el error de patrón si el backend lo devuelve
                     showMessage(`¡Oops! No se encontró el video. Intenta un link directo. 😢\n\n_Detalle: ${error.message}_`, 'error');
                 } finally {
                     loadingDiv.style.display = 'none';
@@ -494,7 +502,6 @@
                     return;
                 }
                 
-                // Deshabilitar botones de descarga
                 downloadMp3Btn.disabled = true;
                 downloadMp4Btn.disabled = true;
                 
@@ -503,7 +510,7 @@
                 showMessage(`Preparando la descarga de ${format.toUpperCase()}...`, 'success');
 
                 try {
-                    // LLamada al Backend para obtener la URL de descarga (usando melodyYT)
+                    // LLamada al Backend para obtener la URL de descarga (tu servidor debe usar melodyYT)
                     const response = await fetch(`${BACKEND_DOWNLOAD_ENDPOINT}?url=${encodeURIComponent(videoMetadata.url)}&format=${format}`);
                     const data = await response.json();
 
@@ -513,13 +520,8 @@
                     
                     const downloadUrl = data.download.url;
 
-                    // Redireccionar al usuario para iniciar la descarga
-                    const link = document.createElement('a');
-                    link.href = downloadUrl;
-                    link.download = `${videoMetadata.title}.${format}`; // Nombre del archivo
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+                    // Abrir la URL de descarga directa
+                    window.open(downloadUrl, '_blank');
 
                     showMessage(`¡Descarga de ${format.toUpperCase()} iniciada! Revisa tus descargas.`, 'success');
 
@@ -528,7 +530,6 @@
                     showMessage(`Error al descargar ${format.toUpperCase()}. 😔\n\n_Detalle: ${error.message}_`, 'error');
                 } finally {
                     loadingDiv.style.display = 'none';
-                    // Rehabilita solo si la vista previa está activa (para reintentar)
                     if(videoMetadata) {
                          downloadMp3Btn.disabled = false;
                          downloadMp4Btn.disabled = false;
@@ -541,15 +542,13 @@
             downloadMp3Btn.addEventListener('click', () => initiateDownload('mp3'));
             downloadMp4Btn.addEventListener('click', () => initiateDownload('mp4'));
             
-            // Permite usar ENTER en el input para verificar
             ytUrlInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
-                    e.preventDefault(); // Evitar envío de formulario si existiera
+                    e.preventDefault(); 
                     getMetadata();
                 }
             });
 
-            // Ocultar mensajes de error al escribir
             ytUrlInput.addEventListener('input', resetState);
         });
     </script>
