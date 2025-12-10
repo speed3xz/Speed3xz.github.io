@@ -40,7 +40,7 @@
             padding: 0 20px;
         }
 
-        /* Header (Simplificado para la función de descarga) */
+        /* Header */
         header {
             background-color: rgba(18, 18, 18, 0.9);
             backdrop-filter: blur(10px);
@@ -77,7 +77,7 @@
             margin-left: 10px;
         }
 
-        /* Hero Section - CENTRADO EN EL FORMULARIO */
+        /* Hero Section */
         .hero {
             padding: 180px 0 100px;
             text-align: center;
@@ -116,6 +116,7 @@
             display: flex;
             margin-bottom: 20px;
             position: relative;
+            gap: 10px;
         }
 
         .input-group input {
@@ -178,6 +179,18 @@
             transform: none;
         }
 
+        .btn-check {
+            width: auto;
+            min-width: 150px;
+            padding: 15px 20px;
+            background: var(--accent);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-check:hover {
+             background: #a03c3c;
+        }
+        
         .btn-mp4 {
             background: linear-gradient(135deg, var(--accent) 0%, #a03c3c 100%);
             box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
@@ -187,14 +200,14 @@
             box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
         }
         
-        /* Resultados */
+        /* Resultados (Vista Previa) */
         #results {
             margin-top: 40px;
             padding: 30px;
-            background: var(--dark-light);
+            background: var(--dark-lighter);
             border-radius: 15px;
-            border: 1px solid var(--dark-lighter);
-            display: none; /* Se muestra con JS */
+            border: 1px solid var(--primary-dark);
+            display: none;
             text-align: left;
             animation: fadeIn 0.5s ease;
         }
@@ -208,14 +221,27 @@
             color: var(--primary);
             margin-bottom: 15px;
             font-size: 1.5rem;
+            text-align: center;
+        }
+        
+        .preview-content {
+            display: flex; 
+            gap: 20px; 
+            align-items: flex-start; 
+            flex-wrap: wrap;
         }
 
-        #results img {
-            max-width: 100%;
+        .preview-content img {
+            max-width: 150px;
             height: auto;
             border-radius: 10px;
-            margin-bottom: 15px;
-            border: 2px solid var(--primary-dark);
+            border: 3px solid var(--primary-dark);
+            flex-shrink: 0;
+        }
+
+        .result-details {
+            flex-grow: 1;
+            min-width: 250px;
         }
 
         .result-details p {
@@ -237,7 +263,7 @@
             height: 20px;
             animation: spin 1s linear infinite;
             margin-left: 10px;
-            display: none;
+            display: inline-block; /* Ocultar/Mostrar con JS */
         }
 
         @keyframes spin {
@@ -245,13 +271,14 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* Alertas (como la de error/éxito) */
+        /* Alertas */
         .alert {
             margin-top: 20px;
             padding: 15px;
             border-radius: 8px;
             font-weight: 600;
             text-align: center;
+            display: none;
         }
 
         .alert-error {
@@ -265,8 +292,7 @@
             border: 1px solid var(--primary);
         }
 
-
-        /* Footer (Se mantiene el diseño original) */
+        /* Footer y Responsive (se mantienen igual) */
         footer {
             background: var(--dark-light);
             padding: 60px 0 30px;
@@ -280,69 +306,18 @@
             align-items: center;
             gap: 30px;
         }
-
-        .footer-logo {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .footer-company {
-            font-size: 1.2rem;
-            color: var(--primary);
-            font-weight: bold;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 20px;
-        }
-
-        .social-links a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            background: var(--dark-lighter);
-            color: var(--text);
-            border-radius: 50%;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-size: 1.2rem;
-        }
-
-        .social-links a:hover {
-            background: var(--gradient);
-            transform: translateY(-5px);
-        }
-
-        .copyright {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            text-align: center;
+        .footer-logo, .social-links, .copyright {
+            /* estilos */
         }
         
-        /* Responsive */
         @media (max-width: 768px) {
-            .hero {
-                padding-top: 120px;
-            }
-            .download-form {
-                padding: 20px;
-            }
-            .input-group {
-                flex-direction: column;
-                gap: 10px;
-            }
-            .download-options {
-                flex-direction: column;
-                gap: 10px;
-            }
-            .btn {
-                width: 100%;
-            }
+            .hero { padding-top: 120px; }
+            .download-form { padding: 20px; }
+            .input-group { flex-direction: column; gap: 10px; }
+            .preview-content { flex-direction: column; align-items: center; }
+            .download-options { flex-direction: column; gap: 10px; }
+            .btn { width: 100%; }
+            .result-details { min-width: 100%; text-align: center; }
         }
     </style>
 </head>
@@ -363,48 +338,47 @@
         <section class="hero">
             <div class="container">
                 <h1>Descargador de YouTube</h1>
-                <div class="hero-subtitle">Música (MP3) y Video (MP4) con un solo link.</div>
+                <div class="hero-subtitle">Música (MP3) y Video (MP4) con vista previa.</div>
                 
                 <div class="download-form">
                     <div class="input-group">
-                        <input type="url" id="ytUrl" placeholder="Pega el link de YouTube aquí..." required>
-                    </div>
-                    
-                    <div class="download-options">
-                        <button id="downloadMp3" class="btn">
-                            <i class="fas fa-file-audio"></i> Descargar Audio (MP3)
-                        </button>
-                        <button id="downloadMp4" class="btn btn-mp4">
-                            <i class="fas fa-file-video"></i> Descargar Video (MP4)
+                        <input type="text" id="ytUrl" placeholder="Pega el link o nombre del video de YouTube aquí..." required>
+                        <button id="checkUrl" class="btn btn-check">
+                            <i class="fas fa-search"></i> Verificar
                         </button>
                     </div>
                     
-                    <div id="loading" class="alert alert-success" style="display: none;">
-                        <i class="fas fa-spinner fa-spin"></i> Procesando tu solicitud... Por favor, espera.
+                    <div id="loading" class="alert alert-success">
+                        <i class="fas fa-spinner fa-spin"></i> <span id="loading-text">Buscando metadatos...</span>
                     </div>
-                    <div id="message" class="alert alert-error" style="display: none;"></div>
+                    <div id="message" class="alert alert-error"></div>
                     
-                    <div id="results" style="display: none;">
-                        <h3>✨ Descarga Lista ✨</h3>
-                        <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
-                            <img id="thumbnail" src="" alt="Thumbnail" style="max-width: 150px;">
+                    <div id="results">
+                        <h3>Vista Previa del Contenido</h3>
+                        <div class="preview-content">
+                            <img id="thumbnail" src="" alt="Thumbnail">
                             <div class="result-details">
-                                <p>Título: <span id="resTitle"></span></p>
-                                <p>Canal: <span id="resAuthor"></span></p>
-                                <p>Duración: <span id="resDuration"></span></p>
-                                <p>Calidad: <span id="resQuality"></span></p>
-                                <a id="finalDownloadBtn" href="#" target="_blank" class="btn" style="margin-top: 15px;">
-                                    <i class="fas fa-download"></i> ¡Click para Descargar!
-                                </a>
+                                <p>Título: <span id="resTitle">---</span></p>
+                                <p>Canal: <span id="resAuthor">---</span></p>
+                                <p>Duración: <span id="resDuration">---</span></p>
+                                <p>URL: <a id="resUrl" href="#" target="_blank" style="color: var(--primary);">Ver en YT</a></p>
                             </div>
+                        </div>
+                        
+                        <div class="download-options">
+                            <button id="downloadMp3" class="btn" disabled>
+                                <i class="fas fa-file-audio"></i> Descargar Audio (MP3)
+                            </button>
+                            <button id="downloadMp4" class="btn btn-mp4" disabled>
+                                <i class="fas fa-file-video"></i> Descargar Video (MP4)
+                            </button>
                         </div>
                     </div>
                     
                 </div>
             </div>
         </section>
-        
-        </main>
+    </main>
     
     <footer>
         <div class="container">
@@ -432,95 +406,151 @@
     </footer>
     
     <script>
+        // *** IMPORTANTE: La lógica de la API (fetch a melody.ultraplus.click)
+        // DEBE ejecutarse en tu servidor (Backend Node.js/Express)
+        
         document.addEventListener('DOMContentLoaded', function() {
             const ytUrlInput = document.getElementById('ytUrl');
+            const checkUrlBtn = document.getElementById('checkUrl');
             const downloadMp3Btn = document.getElementById('downloadMp3');
             const downloadMp4Btn = document.getElementById('downloadMp4');
             const loadingDiv = document.getElementById('loading');
+            const loadingText = document.getElementById('loading-text');
             const messageDiv = document.getElementById('message');
             const resultsDiv = document.getElementById('results');
             
-            // Función principal de descarga (debe comunicarse con tu servidor/backend)
-            async function initiateDownload(format) {
-                const url = ytUrlInput.value.trim();
-                
-                if (!url) {
-                    showMessage('Por favor, ingresa un link de YouTube válido.', 'error');
-                    return;
-                }
-                
-                // Ocultar resultados y mostrar carga
-                resultsDiv.style.display = 'none';
-                showMessage('Procesando tu solicitud... Por favor, espera.', 'success');
-                loadingDiv.style.display = 'flex';
-                downloadMp3Btn.disabled = true;
-                downloadMp4Btn.disabled = true;
+            // Reemplaza esta URL con la ruta REAL de tu servidor (Backend)
+            const BACKEND_METADATA_ENDPOINT = '/api/get-metadata'; 
+            const BACKEND_DOWNLOAD_ENDPOINT = '/api/download'; 
 
-                try {
-                    // *** PUNTO CRÍTICO: COMUNICACIÓN CON EL BACKEND ***
-                    // Aquí es donde harías un 'fetch' a TU PROPIO SERVIDOR (Backend) que tiene la API de Node.js
-                    // Por ejemplo: /api/download?url=...&format=mp3
-                    
-                    // --- SIMULACIÓN DE LLAMADA A TU API DE NODE.JS ---
-                    // Reemplaza esta URL con la ruta real de tu servidor (Backend)
-                    const SERVER_ENDPOINT = 'TU_URL_DE_SERVIDOR/api/download'; 
-                    
-                    const response = await fetch(`${SERVER_ENDPOINT}?url=${encodeURIComponent(url)}&format=${format}`);
-                    const data = await response.json();
-
-                    if (!response.ok || data.error) {
-                        throw new Error(data.error || `Error HTTP: ${response.status}`);
-                    }
-                    // --- FIN SIMULACIÓN ---
-                    
-                    // Supongamos que tu backend devuelve la estructura de la API Melody:
-                    // { download: { url, quality, filename }, metadata: { title, thumbnail, duration, author } }
-                    
-                    const { download, metadata } = data;
-                    
-                    if (!download || !download.url) {
-                         throw new Error('La API de descarga falló o no devolvió la URL de descarga.');
-                    }
-                    
-                    // Mostrar resultados
-                    document.getElementById('thumbnail').src = metadata.thumbnail;
-                    document.getElementById('resTitle').textContent = metadata.title;
-                    document.getElementById('resAuthor').textContent = metadata.author;
-                    document.getElementById('resDuration').textContent = metadata.duration.timestamp;
-                    document.getElementById('resQuality').textContent = download.quality || format.toUpperCase();
-                    
-                    const finalDownloadBtn = document.getElementById('finalDownloadBtn');
-                    finalDownloadBtn.href = download.url;
-                    finalDownloadBtn.textContent = `¡Descargar ${format.toUpperCase()}!`;
-
-                    resultsDiv.style.display = 'block';
-                    showMessage('Descarga lista. Haz clic en el botón de abajo.', 'success');
-
-                } catch (error) {
-                    console.error('Download Error:', error);
-                    showMessage(`Error al procesar: ${error.message || 'Verifica el link e intenta de nuevo.'}`, 'error');
-                } finally {
-                    loadingDiv.style.display = 'none';
-                    downloadMp3Btn.disabled = false;
-                    downloadMp4Btn.disabled = false;
-                }
-            }
+            let videoMetadata = null; // Almacena los datos del video actual
             
             function showMessage(msg, type) {
                 messageDiv.textContent = msg;
                 messageDiv.className = `alert alert-${type}`;
                 messageDiv.style.display = 'block';
+                loadingDiv.style.display = 'none';
+                resultsDiv.style.display = 'none';
+            }
+
+            function resetState() {
+                messageDiv.style.display = 'none';
+                resultsDiv.style.display = 'none';
+                downloadMp3Btn.disabled = true;
+                downloadMp4Btn.disabled = true;
+                videoMetadata = null;
+            }
+
+            async function getMetadata() {
+                const url = ytUrlInput.value.trim();
+                
+                if (!url) {
+                    showMessage('Por favor, ingresa el link o nombre del video.', 'error');
+                    return;
+                }
+                
+                resetState();
+                loadingText.textContent = 'Buscando metadatos...';
+                loadingDiv.style.display = 'block';
+                checkUrlBtn.disabled = true;
+
+                try {
+                    // LLamada al Backend para obtener Metadatos (usando yt-search/yts)
+                    const response = await fetch(`${BACKEND_METADATA_ENDPOINT}?query=${encodeURIComponent(url)}`);
+                    const data = await response.json();
+                    
+                    if (!response.ok || data.error) {
+                        throw new Error(data.error || `Error al buscar los metadatos. Verifique el link.`);
+                    }
+                    
+                    videoMetadata = data.metadata; // Asume que tu backend devuelve { metadata: { title, thumbnail, url, ... } }
+                    
+                    // Mostrar vista previa
+                    document.getElementById('thumbnail').src = videoMetadata.thumbnail;
+                    document.getElementById('resTitle').textContent = videoMetadata.title;
+                    document.getElementById('resAuthor').textContent = videoMetadata.author;
+                    document.getElementById('resDuration').textContent = videoMetadata.duration;
+                    document.getElementById('resUrl').href = videoMetadata.url;
+
+                    resultsDiv.style.display = 'block';
+                    showMessage('Vista previa lista. Selecciona el formato de descarga.', 'success');
+                    
+                    downloadMp3Btn.disabled = false;
+                    downloadMp4Btn.disabled = false;
+
+                } catch (error) {
+                    console.error('Metadata Error:', error);
+                    showMessage(`¡Oops! No se encontró el video. Intenta un link directo. 😢\n\n_Detalle: ${error.message}_`, 'error');
+                } finally {
+                    loadingDiv.style.display = 'none';
+                    checkUrlBtn.disabled = false;
+                }
+            }
+
+
+            async function initiateDownload(format) {
+                if (!videoMetadata) {
+                    showMessage('Primero debes verificar la URL del video.', 'error');
+                    return;
+                }
+                
+                // Deshabilitar botones de descarga
+                downloadMp3Btn.disabled = true;
+                downloadMp4Btn.disabled = true;
+                
+                loadingText.textContent = `Preparando la descarga de ${format.toUpperCase()}...`;
+                loadingDiv.style.display = 'block';
+                showMessage(`Preparando la descarga de ${format.toUpperCase()}...`, 'success');
+
+                try {
+                    // LLamada al Backend para obtener la URL de descarga (usando melodyYT)
+                    const response = await fetch(`${BACKEND_DOWNLOAD_ENDPOINT}?url=${encodeURIComponent(videoMetadata.url)}&format=${format}`);
+                    const data = await response.json();
+
+                    if (!response.ok || data.error || !data.download || !data.download.url) {
+                        throw new Error(data.error || `Error al contactar con la API de descarga.`);
+                    }
+                    
+                    const downloadUrl = data.download.url;
+
+                    // Redireccionar al usuario para iniciar la descarga
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.download = `${videoMetadata.title}.${format}`; // Nombre del archivo
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    showMessage(`¡Descarga de ${format.toUpperCase()} iniciada! Revisa tus descargas.`, 'success');
+
+                } catch (error) {
+                    console.error('Download Error:', error);
+                    showMessage(`Error al descargar ${format.toUpperCase()}. 😔\n\n_Detalle: ${error.message}_`, 'error');
+                } finally {
+                    loadingDiv.style.display = 'none';
+                    // Rehabilita solo si la vista previa está activa (para reintentar)
+                    if(videoMetadata) {
+                         downloadMp3Btn.disabled = false;
+                         downloadMp4Btn.disabled = false;
+                    }
+                }
             }
             
             // Event Listeners
+            checkUrlBtn.addEventListener('click', getMetadata);
             downloadMp3Btn.addEventListener('click', () => initiateDownload('mp3'));
             downloadMp4Btn.addEventListener('click', () => initiateDownload('mp4'));
             
-            // Ocultar mensajes al escribir
-            ytUrlInput.addEventListener('input', () => {
-                messageDiv.style.display = 'none';
-                resultsDiv.style.display = 'none';
+            // Permite usar ENTER en el input para verificar
+            ytUrlInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Evitar envío de formulario si existiera
+                    getMetadata();
+                }
             });
+
+            // Ocultar mensajes de error al escribir
+            ytUrlInput.addEventListener('input', resetState);
         });
     </script>
 </body>
