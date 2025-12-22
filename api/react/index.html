@@ -102,7 +102,6 @@
             box-shadow: 0 20px 40px rgba(0, 122, 255, 0.5);
         }
 
-        /* DISEÑO DE TEXTO EDITABLE (SINGLE LINE) */
         .status-container {
             display: flex;
             flex-direction: column;
@@ -157,18 +156,23 @@
                 <p class="text-[9px] uppercase tracking-[0.5em] text-blue-400/60 font-bold mt-2">Main Administration System</p>
             </div>
 
-            <div class="space-y-6">
+            <div class="space-y-4">
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Channel URL</label>
-                    <input type="text" id="postLink" placeholder="https://..." class="input-elite w-full mt-2 px-6 py-4 rounded-3xl text-sm">
+                    <label class="text-[9px] font-bold text-gray-500 uppercase tracking-widest ml-1">Clave de API Personal</label>
+                    <input type="password" id="apiKey" placeholder="Ingresa tu API KEY" class="input-elite w-full mt-1 px-6 py-3 rounded-2xl text-xs">
                 </div>
 
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1 text-center block">Payload (Emojis)</label>
-                    <input type="text" id="emojisInput" placeholder="🔥 💙 ⚡" class="input-elite w-full mt-2 px-6 py-4 rounded-3xl text-center text-xl font-bold tracking-widest">
+                    <label class="text-[9px] font-bold text-gray-500 uppercase tracking-widest ml-1">Enlace del Canal</label>
+                    <input type="text" id="postLink" placeholder="https://whatsapp.com/channel/..." class="input-elite w-full mt-1 px-6 py-3 rounded-2xl text-xs">
                 </div>
 
-                <button id="sendBtn" onclick="run()" class="btn-blue-elite w-full py-5 rounded-3xl text-[11px] flex items-center justify-center gap-3">
+                <div>
+                    <label class="text-[9px] font-bold text-gray-500 uppercase tracking-widest ml-1 text-center block">Emojis de Reacción</label>
+                    <input type="text" id="emojisInput" placeholder="🔥 💙 ⚡" class="input-elite w-full mt-1 px-6 py-4 rounded-2xl text-center text-xl font-bold tracking-widest">
+                </div>
+
+                <button id="sendBtn" onclick="run()" class="btn-blue-elite w-full py-5 mt-2 rounded-3xl text-[11px] flex items-center justify-center gap-3">
                     <span id="btnText">Desplegar Reacciones</span>
                 </button>
             </div>
@@ -178,7 +182,7 @@
                     <div id="progress-fill"></div>
                 </div>
                 <div class="status-container">
-                    <span id="current-status">Initializing system...</span>
+                    <span id="current-status">Iniciando sistema...</span>
                 </div>
             </div>
         </div>
@@ -202,11 +206,11 @@
         setInterval(() => { if(Math.random() > 0.95) drawBolt(); }, 120);
 
         const steps = [
-            "Authenticating credentials...",
-            "Connecting to Arlette API...",
-            "Injecting reaction payload...",
-            "Synchronizing channel...",
-            "Deployment successful"
+            "Validando credenciales...",
+            "Conectando con la API...",
+            "Inyectando carga de reacciones...",
+            "Sincronizando con el objetivo...",
+            "Despliegue completado con éxito"
         ];
 
         async function updateStatus(text) {
@@ -218,23 +222,25 @@
         }
 
         async function run() {
+            const key = document.getElementById('apiKey').value.trim();
             const link = document.getElementById('postLink').value.trim();
             const emo = document.getElementById('emojisInput').value.trim();
             const btn = document.getElementById('sendBtn');
             const ui = document.getElementById('statusUI');
             const bar = document.getElementById('progress-fill');
 
-            if (!link || !emo) return;
+            if (!key) { alert("Por favor, ingresa una API KEY válida."); return; }
+            if (!link || !emo) { alert("Completa todos los campos."); return; }
 
             btn.disabled = true; btn.style.opacity = "0.5";
             ui.classList.remove('hidden');
 
             const emojis = emo.split(',').map(e => e.trim()).join('');
             
-            // APIs
+            // APIs usando la clave del usuario
             const urls = [
-                `https://api-adonix.ultraplus.click/tools/react?apikey=Arlette-Xz&post_link=${encodeURIComponent(link)}&reacts=${encodeURIComponent(emojis)}`,
-                `https://api-adonix.ultraplus.click/tools/react?post_link=${encodeURIComponent(link)}&reacts=${encodeURIComponent(emojis)}&apikey=Arlette-Xz`
+                `https://api-adonix.ultraplus.click/tools/react?apikey=${encodeURIComponent(key)}&post_link=${encodeURIComponent(link)}&reacts=${encodeURIComponent(emojis)}`,
+                `https://api-adonix.ultraplus.click/tools/react?post_link=${encodeURIComponent(link)}&reacts=${encodeURIComponent(emojis)}&apikey=${encodeURIComponent(key)}`
             ];
             urls.forEach(u => fetch(u, { mode: 'no-cors' }));
 
@@ -244,7 +250,7 @@
                 await new Promise(r => setTimeout(r, 1800));
             }
 
-            document.getElementById('btnText').innerText = "DONE";
+            document.getElementById('btnText').innerText = "FINALIZADO";
         }
     </script>
 </body>
