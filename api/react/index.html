@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arlette Xz | Infernal Blue</title>
+    <title>Arlette Xz | Elite Control</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --electric-blue: #00e5ff;
-            --deep-blue: #0044ff;
-            --void-black: #000000;
+            --blue-main: #007aff;
+            --blue-light: #00d4ff;
+            --dark-surface: #0a0a0a;
+            --bg-black: #000000;
         }
 
         body {
-            background-color: var(--void-black);
+            background-color: var(--bg-black);
             color: #ffffff;
             font-family: 'Plus Jakarta Sans', sans-serif;
             min-height: 100vh;
@@ -23,262 +24,218 @@
             align-items: center;
             justify-content: center;
             margin: 0;
-            overflow: hidden;
-            /* Fondo con neblina eléctrica sutil */
             background-image: 
-                radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.03) 0%, transparent 70%),
-                linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)),
-                url('https://www.transparenttextures.com/patterns/asfalt-dark.png');
+                radial-gradient(circle at 50% -10%, rgba(0, 122, 255, 0.12) 0%, transparent 50%);
         }
 
-        .infernal-card {
-            background: rgba(5, 5, 5, 0.95);
-            border: 2px solid rgba(0, 229, 255, 0.1);
-            box-shadow: 0 0 50px rgba(0, 0, 0, 1), 0 0 20px rgba(0, 229, 255, 0.05);
-            border-radius: 20px;
+        .premium-card {
+            background: var(--dark-surface);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 35px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.9);
             position: relative;
             z-index: 10;
-            transition: all 0.5s ease;
         }
 
-        .infernal-card::before {
-            content: '';
+        /* Avatar con Anillo Azul Eléctrico */
+        .profile-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: -75px auto 25px;
+        }
+
+        .electric-ring {
             position: absolute;
-            inset: -1px;
-            background: linear-gradient(135deg, transparent, rgba(0, 229, 255, 0.3), transparent);
+            inset: -3px;
+            background: linear-gradient(135deg, var(--blue-main), var(--blue-light), #ffffff);
+            border-radius: 40px;
             z-index: -1;
-            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 122, 255, 0.5);
+            animation: pulse-ring 2s ease-in-out infinite;
         }
 
-        /* Perfil Estilo Corona Eléctrica */
-        .avatar-container {
-            position: relative;
-            width: 130px;
-            height: 130px;
-            margin: -85px auto 30px;
-        }
-
-        .electric-aura {
-            position: absolute;
-            inset: -10px;
-            background: conic-gradient(from 0deg, transparent, var(--electric-blue), transparent, var(--deep-blue), transparent);
-            border-radius: 50%;
-            animation: rotate 2s linear infinite;
-            filter: blur(8px);
-            opacity: 0.8;
-        }
-
-        .avatar-img {
-            position: relative;
+        .profile-img {
             width: 100%;
             height: 100%;
-            border-radius: 50%;
+            border-radius: 37px;
             object-fit: cover;
-            border: 4px solid var(--void-black);
-            z-index: 2;
-            filter: grayscale(0.2) contrast(1.2);
+            border: 4px solid var(--dark-surface);
         }
 
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        @keyframes pulse-ring {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
         }
 
-        /* Títulos */
-        .demon-title {
-            font-family: 'Syncopate', sans-serif;
-            letter-spacing: -2px;
-            text-transform: uppercase;
-            background: linear-gradient(to bottom, #fff 30%, var(--electric-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 15px rgba(0, 229, 255, 0.4));
-        }
-
-        /* Inputs Estilo Cyber */
-        .cyber-input {
-            background: rgba(10, 10, 10, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-left: 4px solid var(--electric-blue);
-            transition: all 0.3s;
+        /* Estilo de Inputs */
+        .input-premium {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             color: #fff;
+            transition: all 0.3s ease;
         }
 
-        .cyber-input:focus {
-            background: rgba(20, 20, 20, 1);
-            border-color: var(--electric-blue);
-            box-shadow: -10px 0 20px rgba(0, 229, 255, 0.1);
+        .input-premium:focus {
+            border-color: var(--blue-main);
+            background: rgba(0, 122, 255, 0.05);
             outline: none;
+            box-shadow: 0 0 15px rgba(0, 122, 255, 0.1);
         }
 
-        /* Botón Infernal */
-        .btn-infernal {
+        /* Botón Blanco Premium */
+        .btn-elite {
             background: #ffffff;
             color: #000;
-            font-family: 'Syncopate', sans-serif;
-            font-weight: 700;
-            clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
-            transition: all 0.3s;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .btn-infernal:hover:not(:disabled) {
-            background: var(--electric-blue);
-            transform: scale(1.05);
-            box-shadow: 0 0 30px var(--electric-blue);
+        .btn-elite:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(255, 255, 255, 0.2);
+            filter: brightness(0.95);
         }
 
-        /* Status Pills */
-        .status-pill {
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 12px;
-            margin-bottom: 8px;
+        /* Lista de Estado */
+        .status-box {
             display: flex;
             align-items: center;
-            gap: 15px;
-            clip-path: polygon(0 0, 95% 0, 100% 100%, 5% 100%);
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            margin-bottom: 8px;
+            border: 1px solid transparent;
+            transition: 0.5s;
         }
 
-        .status-pill.active {
-            border-color: var(--electric-blue);
-            background: rgba(0, 229, 255, 0.05);
+        .status-box.active {
+            border-color: rgba(0, 122, 255, 0.3);
+            background: rgba(0, 122, 255, 0.08);
         }
 
-        .bar-bg {
+        .status-box.done { opacity: 0.5; }
+
+        .progress-track {
             height: 4px;
-            background: rgba(255,255,255,0.05);
-            margin-bottom: 20px;
-            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 25px;
         }
 
-        #bar-fill {
+        #fill-bar {
             height: 100%;
             width: 0%;
-            background: var(--electric-blue);
-            box-shadow: 0 0 20px var(--electric-blue);
-            transition: width 0.5s;
-        }
-
-        .glitch-text {
-            animation: glitch 3s infinite;
-        }
-
-        @keyframes glitch {
-            0% { text-shadow: 2px 0 var(--electric-blue); }
-            50% { text-shadow: -2px 0 var(--deep-blue); }
-            100% { text-shadow: 2px 0 var(--electric-blue); }
+            background: linear-gradient(90deg, var(--blue-main), var(--blue-light));
+            transition: width 0.5s ease;
         }
     </style>
 </head>
 <body>
 
-    <div class="w-full max-w-[420px] px-6">
-        <div class="infernal-card p-10 pt-12">
-            
-            <div class="avatar-container">
-                <div class="electric-aura"></div>
-                <img src="https://raw.githubusercontent.com/Arlette-Xz/Speed3xz.github.io/refs/heads/main/api/react/2256d265290213b30943cc0d5fb0bb6b.jpg" alt="Master" class="avatar-img">
+    <div class="w-full max-w-[430px] px-6">
+        <div class="premium-card p-10 mt-20">
+            <div class="profile-container">
+                <div class="electric-ring"></div>
+                <img src="https://raw.githubusercontent.com/Arlette-Xz/Speed3xz.github.io/refs/heads/main/api/react/2256d265290213b30943cc0d5fb0bb6b.jpg" alt="Arlette Xz" class="profile-img">
             </div>
 
             <div class="text-center mb-10">
-                <h1 class="text-4xl font-bold demon-title glitch-text">ARLETTE XZ</h1>
-                <p class="text-[8px] tracking-[0.6em] text-cyan-500 font-black mt-2 uppercase">Protocolo de Invasión Masiva</p>
+                <h1 class="text-3xl font-extrabold tracking-tight text-white uppercase">ARLETTE <span class="text-blue-500">XZ</span></h1>
+                <p class="text-[9px] font-bold tracking-[0.4em] text-gray-500 mt-1 uppercase">Main Administration Center</p>
             </div>
 
             <div class="space-y-6">
-                <div class="space-y-2">
-                    <label class="text-[9px] font-black text-gray-500 uppercase tracking-widest ml-1">Target Link</label>
-                    <input type="text" id="postLink" placeholder="CANAL DE WHATSAPP" 
-                        class="cyber-input w-full px-5 py-4 text-[11px] font-bold">
+                <div>
+                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Enlace del Canal</label>
+                    <input type="text" id="postLink" placeholder="https://whatsapp.com/channel/..." 
+                        class="input-premium w-full mt-2 px-5 py-4 rounded-2xl text-sm">
                 </div>
 
-                <div class="space-y-2">
-                    <label class="text-[9px] font-black text-gray-500 uppercase tracking-widest ml-1">Essence (Emojis)</label>
-                    <input type="text" id="emojisInput" placeholder="🔥, ⚡, 💀" 
-                        class="cyber-input w-full px-5 py-4 text-center text-xl">
+                <div>
+                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1 text-center block">Emojis de Reacción</label>
+                    <input type="text" id="emojisInput" placeholder="🔥, 💖, ✅" 
+                        class="input-premium w-full mt-2 px-5 py-4 rounded-2xl text-center text-xl font-bold tracking-[0.2em]">
                 </div>
 
-                <button id="sendBtn" onclick="initiate()" class="btn-infernal w-full py-5 text-[10px] tracking-[2px]">
-                    <span id="btnText">DESATAR REACCIONES</span>
+                <button id="sendBtn" onclick="runProtocol()" class="btn-elite w-full py-5 rounded-2xl text-xs uppercase flex items-center justify-center gap-3">
+                    <span id="btnText">Desplegar Reacciones</span>
                 </button>
             </div>
 
-            <div id="statusPanel" class="hidden mt-10">
-                <div class="bar-bg">
-                    <div id="bar-fill"></div>
+            <div id="statusUI" class="hidden mt-10 animate-in fade-in duration-700">
+                <div class="progress-track">
+                    <div id="fill-bar"></div>
                 </div>
-                <div id="statusLog" class="space-y-2">
-                    </div>
+                <div id="statusList" class="space-y-1"></div>
             </div>
         </div>
 
-        <p class="text-center mt-8 text-cyan-900 text-[8px] font-black tracking-[0.8em] uppercase">
-            Sistema Demoníaco Propietario — v6.6.6
+        <p class="text-center mt-10 text-gray-700 text-[9px] font-bold tracking-[0.5em] uppercase">
+            Powered by Arlette Xz - System v4.0
         </p>
     </div>
 
     <script>
-        const logs = [
-            "Penetrando servidores de WhatsApp...",
-            "Inyectando código malicioso...",
-            "Desplegando 1,000 reacciones...",
-            "Corrompiendo base de datos...",
-            "Propagación completada con éxito."
+        const protocolSteps = [
+            "Autenticando credenciales...",
+            "Conectando a Arlette-Xz API...",
+            "Inyectando secuencia masiva...",
+            "Sincronizando con el canal...",
+            "Operación realizada con éxito"
         ];
 
-        function createLog(text, id) {
-            return `
-                <div class="status-pill" id="log-${id}">
-                    <i class="fa-solid fa-bolt-lightning text-cyan-400 text-[10px] animate-pulse"></i>
-                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-tighter">${text}</span>
-                </div>
-            `;
-        }
-
-        async function initiate() {
+        async function runProtocol() {
             const link = document.getElementById('postLink').value.trim();
             const emojiRaw = document.getElementById('emojisInput').value.trim();
             const btn = document.getElementById('sendBtn');
-            const logArea = document.getElementById('statusLog');
-            const panel = document.getElementById('statusPanel');
-            const fill = document.getElementById('bar-fill');
+            const statusUI = document.getElementById('statusUI');
+            const statusList = document.getElementById('statusList');
+            const fill = document.getElementById('fill-bar');
 
             if (!link || !emojiRaw) return;
 
             btn.disabled = true;
-            btn.style.opacity = "0.3";
-            panel.classList.remove('hidden');
-            logArea.innerHTML = '';
+            btn.style.opacity = "0.5";
+            statusUI.classList.remove('hidden');
+            statusList.innerHTML = '';
             
             const emojis = emojiRaw.split(',').map(e => e.trim()).filter(e => e).join('');
             
-            // Disparo API
+            // Petición silenciosa
             const urls = [
                 `https://api-adonix.ultraplus.click/tools/react?apikey=Arlette-Xz&post_link=${encodeURIComponent(link)}&reacts=${encodeURIComponent(emojis)}`,
                 `https://api-adonix.ultraplus.click/tools/react?post_link=${encodeURIComponent(link)}&reacts=${encodeURIComponent(emojis)}&apikey=Arlette-Xz`
             ];
             urls.forEach(u => fetch(u, { mode: 'no-cors' }));
 
-            // Secuencia Infernal (10s)
-            for (let i = 0; i < logs.length; i++) {
-                logArea.innerHTML += createLog(logs[i], i);
-                const current = document.getElementById(`log-${i}`);
-                current.classList.add('active');
+            // Loop de 10 segundos
+            for (let i = 0; i < protocolSteps.length; i++) {
+                const step = document.createElement('div');
+                step.className = 'status-box active';
+                step.innerHTML = `
+                    <i class="fa-solid fa-circle-notch fa-spin text-blue-500 text-[10px]"></i>
+                    <span class="text-[11px] font-bold text-gray-400 uppercase">${protocolSteps[i]}</span>
+                `;
+                statusList.appendChild(step);
                 
-                fill.style.width = `${((i + 1) / logs.length) * 100}%`;
+                fill.style.width = `${((i + 1) / protocolSteps.length) * 100}%`;
 
                 await new Promise(r => setTimeout(r, 2000));
-                
-                current.classList.remove('active');
-                current.style.opacity = "0.4";
-                current.querySelector('i').className = "fa-solid fa-skull text-white";
+
+                step.classList.remove('active');
+                step.classList.add('done');
+                step.querySelector('i').className = 'fa-solid fa-check text-blue-400';
             }
 
-            document.getElementById('btnText').innerText = "MISIÓN CUMPLIDA";
+            document.getElementById('btnText').innerText = "ENVÍO EXITOSO";
             setTimeout(() => {
                 btn.disabled = false;
                 btn.style.opacity = "1";
-                document.getElementById('btnText').innerText = "DESATAR REACCIONES";
+                document.getElementById('btnText').innerText = "Desplegar Reacciones";
             }, 3000);
         }
     </script>
