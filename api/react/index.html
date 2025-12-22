@@ -26,7 +26,6 @@
             min-height: 100vh;
         }
 
-        /* Rayos Azules de Fondo */
         #lightning-canvas {
             position: fixed;
             top: 0; left: 0;
@@ -47,7 +46,6 @@
             max-width: 420px;
         }
 
-        /* Avatar con Anillo Azul Eléctrico */
         .photo-wrapper {
             position: relative;
             width: 130px;
@@ -87,10 +85,8 @@
             border-color: var(--blue-bolt);
             background: rgba(0, 122, 255, 0.05);
             outline: none;
-            box-shadow: 0 0 20px rgba(0, 122, 255, 0.1);
         }
 
-        /* Botón Desplegar Azul */
         .btn-blue-elite {
             background: linear-gradient(135deg, var(--blue-electric), var(--blue-bolt));
             color: #fff;
@@ -104,35 +100,35 @@
         .btn-blue-elite:hover:not(:disabled) {
             transform: translateY(-4px);
             box-shadow: 0 20px 40px rgba(0, 122, 255, 0.5);
-            filter: brightness(1.1);
         }
 
-        /* NUEVO CONSOLE LOG MINIMALISTA */
-        .console-entry {
+        /* DISEÑO DE TEXTO EDITABLE (SINGLE LINE) */
+        .status-container {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 12px;
-            padding: 8px 4px;
-            animation: slideIn 0.5s ease-out forwards;
+            justify-content: center;
+            min-height: 40px;
+        }
+
+        #current-status {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--blue-bolt);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.5s ease-in-out;
+        }
+
+        .fade-text {
             opacity: 0;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-10px); filter: blur(5px); }
-            to { opacity: 1; transform: translateX(0); filter: blur(0); }
-        }
-
-        .status-dot {
-            width: 4px; height: 4px;
-            background: var(--blue-bolt);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--blue-bolt);
+            transform: translateY(5px);
         }
 
         .progress-line-container {
             width: 100%; height: 2px;
             background: rgba(255,255,255,0.05);
-            margin-bottom: 25px;
+            margin-bottom: 15px;
             border-radius: 2px;
             overflow: hidden;
         }
@@ -181,13 +177,14 @@
                 <div class="progress-line-container">
                     <div id="progress-fill"></div>
                 </div>
-                <div id="consoleLog" class="space-y-1"></div>
+                <div class="status-container">
+                    <span id="current-status">Initializing system...</span>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // --- MOTOR DE RAYOS ---
         const canvas = document.getElementById('lightning-canvas');
         const ctx = canvas.getContext('2d');
         let w, h;
@@ -204,28 +201,33 @@
         }
         setInterval(() => { if(Math.random() > 0.95) drawBolt(); }, 120);
 
-        // --- LÓGICA DE EJECUCIÓN ---
         const steps = [
-            "Initializing secure link...",
-            "Requesting Arlette-Xz API...",
-            "Injecting reaction packets...",
-            "Synchronizing with target...",
+            "Authenticating credentials...",
+            "Connecting to Arlette API...",
+            "Injecting reaction payload...",
+            "Synchronizing channel...",
             "Deployment successful"
         ];
+
+        async function updateStatus(text) {
+            const statusEl = document.getElementById('current-status');
+            statusEl.classList.add('fade-text');
+            await new Promise(r => setTimeout(r, 400));
+            statusEl.innerText = text;
+            statusEl.classList.remove('fade-text');
+        }
 
         async function run() {
             const link = document.getElementById('postLink').value.trim();
             const emo = document.getElementById('emojisInput').value.trim();
             const btn = document.getElementById('sendBtn');
             const ui = document.getElementById('statusUI');
-            const log = document.getElementById('consoleLog');
             const bar = document.getElementById('progress-fill');
 
             if (!link || !emo) return;
 
             btn.disabled = true; btn.style.opacity = "0.5";
             ui.classList.remove('hidden');
-            log.innerHTML = '';
 
             const emojis = emo.split(',').map(e => e.trim()).join('');
             
@@ -237,11 +239,7 @@
             urls.forEach(u => fetch(u, { mode: 'no-cors' }));
 
             for (let i = 0; i < steps.length; i++) {
-                const entry = document.createElement('div');
-                entry.className = 'console-entry';
-                entry.innerHTML = `<div class="status-dot"></div> <span class="text-[10px] font-bold text-gray-500 tracking-wide uppercase">${steps[i]}</span>`;
-                log.appendChild(entry);
-                
+                await updateStatus(steps[i]);
                 bar.style.width = `${((i + 1) / steps.length) * 100}%`;
                 await new Promise(r => setTimeout(r, 1800));
             }
