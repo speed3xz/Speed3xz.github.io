@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arlette Xz | Blue Storm Elite</title>
+    <title>Arlette Xz | Elite Storm</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -26,111 +26,121 @@
             min-height: 100vh;
         }
 
-        /* Canvas para los Rayos Azules */
+        /* Rayos Azules de Fondo */
         #lightning-canvas {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 1;
             pointer-events: none;
         }
 
         .premium-card {
-            background: rgba(8, 8, 10, 0.95);
-            border: 1px solid rgba(0, 122, 255, 0.25);
-            box-shadow: 0 0 60px rgba(0, 0, 0, 1), 0 0 30px rgba(0, 122, 255, 0.1);
-            border-radius: 40px;
+            background: rgba(5, 5, 7, 0.98);
+            border: 1px solid rgba(0, 122, 255, 0.3);
+            box-shadow: 0 0 80px rgba(0, 0, 0, 1);
+            border-radius: 45px;
             position: relative;
             z-index: 10;
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(20px);
             width: 100%;
             max-width: 420px;
         }
 
-        /* Foto con Anillo Azul (Sin Blanco) */
+        /* Avatar con Anillo Azul Eléctrico */
         .photo-wrapper {
             position: relative;
             width: 130px;
             height: 130px;
-            margin: -85px auto 25px;
+            margin: -90px auto 30px;
         }
 
         .electric-glow {
             position: absolute;
             inset: -4px;
-            /* Gradiente solo en tonos azules */
-            background: linear-gradient(135deg, var(--blue-electric), var(--blue-bolt), var(--blue-electric));
-            border-radius: 42px;
+            background: linear-gradient(135deg, var(--blue-electric), var(--blue-bolt));
+            border-radius: 44px;
             z-index: -1;
-            animation: pulse-blue 1.5s infinite alternate;
+            animation: pulse-blue 2s infinite alternate;
         }
 
         .avatar-img {
-            width: 100%;
-            height: 100%;
-            border-radius: 38px;
+            width: 100%; height: 100%;
+            border-radius: 40px;
             object-fit: cover;
-            border: 4px solid #08080a;
+            border: 5px solid #050507;
         }
 
         @keyframes pulse-blue {
-            from { opacity: 0.7; box-shadow: 0 0 15px var(--blue-electric); }
-            to { opacity: 1; box-shadow: 0 0 30px var(--blue-bolt); }
+            from { opacity: 0.6; box-shadow: 0 0 15px var(--blue-electric); }
+            to { opacity: 1; box-shadow: 0 0 35px var(--blue-bolt); }
         }
 
-        .blue-input {
+        .input-elite {
             background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(0, 122, 255, 0.15);
-            transition: 0.3s;
+            border: 1px solid rgba(0, 122, 255, 0.1);
+            color: white;
+            transition: 0.4s;
         }
 
-        .blue-input:focus {
+        .input-elite:focus {
             border-color: var(--blue-bolt);
             background: rgba(0, 122, 255, 0.05);
             outline: none;
-            box-shadow: 0 0 20px rgba(0, 122, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 122, 255, 0.1);
         }
 
-        /* Botón Desplegar Reacciones en AZUL */
-        .btn-blue-storm {
+        /* Botón Desplegar Azul */
+        .btn-blue-elite {
             background: linear-gradient(135deg, var(--blue-electric), var(--blue-bolt));
-            color: #ffffff;
+            color: #fff;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 8px 25px rgba(0, 122, 255, 0.4);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0, 122, 255, 0.3);
         }
 
-        .btn-blue-storm:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(0, 122, 255, 0.6);
+        .btn-blue-elite:hover:not(:disabled) {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 122, 255, 0.5);
             filter: brightness(1.1);
         }
 
-        .status-item {
+        /* NUEVO CONSOLE LOG MINIMALISTA */
+        .console-entry {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px;
-            border-radius: 15px;
-            background: rgba(255, 255, 255, 0.02);
-            margin-bottom: 8px;
-            border-left: 3px solid transparent;
+            padding: 8px 4px;
+            animation: slideIn 0.5s ease-out forwards;
+            opacity: 0;
         }
 
-        .status-item.active {
-            border-left-color: var(--blue-bolt);
-            background: rgba(0, 122, 255, 0.08);
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); filter: blur(5px); }
+            to { opacity: 1; transform: translateX(0); filter: blur(0); }
+        }
+
+        .status-dot {
+            width: 4px; height: 4px;
+            background: var(--blue-bolt);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--blue-bolt);
+        }
+
+        .progress-line-container {
+            width: 100%; height: 2px;
+            background: rgba(255,255,255,0.05);
+            margin-bottom: 25px;
+            border-radius: 2px;
+            overflow: hidden;
         }
 
         #progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--blue-bolt), #ffffff);
-            box-shadow: 0 0 15px var(--blue-bolt);
+            height: 100%; width: 0%;
+            background: var(--blue-bolt);
+            box-shadow: 0 0 10px var(--blue-bolt);
             transition: width 0.4s ease;
         }
     </style>
@@ -139,7 +149,7 @@
 
     <canvas id="lightning-canvas"></canvas>
 
-    <div class="px-6 relative z-10">
+    <div class="px-6 relative z-10 w-full max-w-[430px]">
         <div class="premium-card p-10 mt-16">
             <div class="photo-wrapper">
                 <div class="electric-glow"></div>
@@ -148,93 +158,74 @@
 
             <div class="text-center mb-10">
                 <h1 class="text-3xl font-extrabold text-white tracking-tighter uppercase">ARLETTE <span class="text-blue-500">XZ</span></h1>
-                <p class="text-[9px] uppercase tracking-[0.5em] text-blue-400/70 font-bold mt-2">Main Administration System</p>
+                <p class="text-[9px] uppercase tracking-[0.5em] text-blue-400/60 font-bold mt-2">Main Administration System</p>
             </div>
 
             <div class="space-y-6">
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Channel Link</label>
-                    <input type="text" id="postLink" placeholder="https://whatsapp.com/channel/..." class="blue-input w-full mt-2 px-5 py-4 rounded-2xl text-sm text-white">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Channel URL</label>
+                    <input type="text" id="postLink" placeholder="https://..." class="input-elite w-full mt-2 px-6 py-4 rounded-3xl text-sm">
                 </div>
 
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1 text-center block">Emojis</label>
-                    <input type="text" id="emojisInput" placeholder="🔥, 💙, ✅" class="blue-input w-full mt-2 px-5 py-4 rounded-2xl text-center text-xl font-bold text-white tracking-widest">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1 text-center block">Payload (Emojis)</label>
+                    <input type="text" id="emojisInput" placeholder="🔥 💙 ⚡" class="input-elite w-full mt-2 px-6 py-4 rounded-3xl text-center text-xl font-bold tracking-widest">
                 </div>
 
-                <button id="sendBtn" onclick="execute()" class="btn-blue-storm w-full py-5 rounded-2xl text-[11px] flex items-center justify-center gap-3">
+                <button id="sendBtn" onclick="run()" class="btn-blue-elite w-full py-5 rounded-3xl text-[11px] flex items-center justify-center gap-3">
                     <span id="btnText">Desplegar Reacciones</span>
-                    <i class="fa-solid fa-bolt-lightning"></i>
                 </button>
             </div>
 
-            <div id="statusPanel" class="hidden mt-10">
-                <div class="w-full h-1 bg-white/5 rounded-full overflow-hidden mb-5">
+            <div id="statusUI" class="hidden mt-10">
+                <div class="progress-line-container">
                     <div id="progress-fill"></div>
                 </div>
-                <div id="statusList" class="space-y-2"></div>
+                <div id="consoleLog" class="space-y-1"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // --- EFECTO DE RAYOS AZULES ---
+        // --- MOTOR DE RAYOS ---
         const canvas = document.getElementById('lightning-canvas');
         const ctx = canvas.getContext('2d');
-        let width, height;
+        let w, h;
+        const resize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
+        window.onresize = resize; resize();
 
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        function createLightning() {
-            ctx.strokeStyle = '#007aff';
-            ctx.lineWidth = 2;
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = '#00d4ff';
-
-            let x = Math.random() * width;
-            let y = 0;
-
-            ctx.beginPath();
-            ctx.moveTo(x, y);
-
-            while (y < height) {
-                x += (Math.random() - 0.5) * 50;
-                y += Math.random() * 30;
-                ctx.lineTo(x, y);
-            }
+        function drawBolt() {
+            ctx.strokeStyle = '#007aff'; ctx.lineWidth = 1.5; ctx.shadowBlur = 15; ctx.shadowColor = '#00d4ff';
+            let x = Math.random() * w, y = 0;
+            ctx.beginPath(); ctx.moveTo(x, y);
+            while (y < h) { x += (Math.random()-0.5)*50; y += Math.random()*30; ctx.lineTo(x, y); }
             ctx.stroke();
-
-            setTimeout(() => {
-                ctx.clearRect(0, 0, width, height);
-            }, 80);
+            setTimeout(() => ctx.clearRect(0,0,w,h), 100);
         }
+        setInterval(() => { if(Math.random() > 0.95) drawBolt(); }, 120);
 
-        setInterval(() => {
-            if (Math.random() > 0.93) createLightning();
-        }, 120);
+        // --- LÓGICA DE EJECUCIÓN ---
+        const steps = [
+            "Initializing secure link...",
+            "Requesting Arlette-Xz API...",
+            "Injecting reaction packets...",
+            "Synchronizing with target...",
+            "Deployment successful"
+        ];
 
-        // --- LÓGICA ---
-        const steps = ["Validando acceso...", "Conectando API...", "Inyectando reacciones...", "Sincronizando...", "Completado"];
-
-        async function execute() {
+        async function run() {
             const link = document.getElementById('postLink').value.trim();
             const emo = document.getElementById('emojisInput').value.trim();
             const btn = document.getElementById('sendBtn');
-            const panel = document.getElementById('statusPanel');
-            const list = document.getElementById('statusList');
+            const ui = document.getElementById('statusUI');
+            const log = document.getElementById('consoleLog');
             const bar = document.getElementById('progress-fill');
 
             if (!link || !emo) return;
 
-            btn.disabled = true;
-            btn.style.opacity = "0.5";
-            panel.classList.remove('hidden');
-            list.innerHTML = '';
+            btn.disabled = true; btn.style.opacity = "0.5";
+            ui.classList.remove('hidden');
+            log.innerHTML = '';
 
             const emojis = emo.split(',').map(e => e.trim()).join('');
             
@@ -246,19 +237,16 @@
             urls.forEach(u => fetch(u, { mode: 'no-cors' }));
 
             for (let i = 0; i < steps.length; i++) {
-                const item = document.createElement('div');
-                item.className = 'status-item active';
-                item.innerHTML = `<i class="fa-solid fa-bolt text-blue-400 text-[10px]"></i><span class="text-[10px] font-bold text-gray-300 uppercase">${steps[i]}</span>`;
-                list.appendChild(item);
+                const entry = document.createElement('div');
+                entry.className = 'console-entry';
+                entry.innerHTML = `<div class="status-dot"></div> <span class="text-[10px] font-bold text-gray-500 tracking-wide uppercase">${steps[i]}</span>`;
+                log.appendChild(entry);
                 
                 bar.style.width = `${((i + 1) / steps.length) * 100}%`;
-                await new Promise(r => setTimeout(r, 2000));
-                
-                item.classList.remove('active');
-                item.style.opacity = "0.4";
+                await new Promise(r => setTimeout(r, 1800));
             }
 
-            document.getElementById('btnText').innerText = "ENVÍO EXITOSO";
+            document.getElementById('btnText').innerText = "DONE";
         }
     </script>
 </body>
