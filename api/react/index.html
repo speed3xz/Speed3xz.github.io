@@ -3,239 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arlette Xz | Elite Control</title>
+    <title>Arlette Xz | Blue Elite</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --blue-main: #007aff;
-            --blue-light: #00d4ff;
-            --dark-surface: #0a0a0a;
-            --bg-black: #000000;
+            --blue-primary: #007aff;
+            --blue-glow: #00d4ff;
+            --dark-bg: #02040a;
+            --card-bg: #0a0c12;
         }
 
         body {
-            background-color: var(--bg-black);
+            background-color: var(--dark-bg);
             color: #ffffff;
             font-family: 'Plus Jakarta Sans', sans-serif;
+            background-image: 
+                radial-gradient(circle at 50% -10%, rgba(0, 122, 255, 0.15) 0%, transparent 60%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0;
-            background-image: 
-                radial-gradient(circle at 50% -10%, rgba(0, 122, 255, 0.12) 0%, transparent 50%);
         }
 
         .premium-card {
-            background: var(--dark-surface);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 35px;
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.9);
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 122, 255, 0.2);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 122, 255, 0.05);
+            border-radius: 32px;
             position: relative;
-            z-index: 10;
+            overflow: hidden;
         }
 
-        /* Avatar con Anillo Azul Eléctrico */
-        .profile-container {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin: -75px auto 25px;
-        }
-
-        .electric-ring {
-            position: absolute;
-            inset: -3px;
-            background: linear-gradient(135deg, var(--blue-main), var(--blue-light), #ffffff);
-            border-radius: 40px;
-            z-index: -1;
-            box-shadow: 0 0 20px rgba(0, 122, 255, 0.5);
-            animation: pulse-ring 2s ease-in-out infinite;
-        }
-
-        .profile-img {
-            width: 100%;
-            height: 100%;
-            border-radius: 37px;
-            object-fit: cover;
-            border: 4px solid var(--dark-surface);
-        }
-
-        @keyframes pulse-ring {
-            0%, 100% { opacity: 0.8; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.02); }
-        }
-
-        /* Estilo de Inputs */
-        .input-premium {
+        .blue-input {
             background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: #fff;
+            border: 1px solid rgba(0, 122, 255, 0.1);
             transition: all 0.3s ease;
         }
 
-        .input-premium:focus {
-            border-color: var(--blue-main);
+        .blue-input:focus {
+            border-color: var(--blue-primary);
             background: rgba(0, 122, 255, 0.05);
             outline: none;
-            box-shadow: 0 0 15px rgba(0, 122, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 122, 255, 0.2);
         }
 
-        /* Botón Blanco Premium */
-        .btn-elite {
-            background: #ffffff;
-            color: #000;
-            font-weight: 800;
-            letter-spacing: 0.5px;
+        .blue-button {
+            background: linear-gradient(135deg, var(--blue-primary), var(--blue-glow));
+            box-shadow: 0 8px 20px rgba(0, 122, 255, 0.3);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: white;
+            font-weight: 700;
         }
 
-        .btn-elite:hover:not(:disabled) {
+        .blue-button:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(255, 255, 255, 0.2);
-            filter: brightness(0.95);
+            box-shadow: 0 12px 25px rgba(0, 122, 255, 0.5);
+            filter: brightness(1.1);
         }
 
-        /* Lista de Estado */
-        .status-box {
+        /* Nuevo diseño de Log de Estado */
+        .status-item {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 16px;
-            border-radius: 16px;
+            padding: 10px;
+            border-radius: 12px;
             background: rgba(255, 255, 255, 0.02);
             margin-bottom: 8px;
-            border: 1px solid transparent;
-            transition: 0.5s;
+            border-left: 3px solid transparent;
+            transition: all 0.5s ease;
         }
 
-        .status-box.active {
-            border-color: rgba(0, 122, 255, 0.3);
+        .status-item.active {
+            border-left-color: var(--blue-primary);
             background: rgba(0, 122, 255, 0.08);
         }
 
-        .status-box.done { opacity: 0.5; }
+        .status-item.completed {
+            border-left-color: #10b981;
+            opacity: 0.7;
+        }
 
-        .progress-track {
-            height: 4px;
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
-        #fill-bar {
-            height: 100%;
+        #progress-fill {
             width: 0%;
-            background: linear-gradient(90deg, var(--blue-main), var(--blue-light));
-            transition: width 0.5s ease;
+            height: 100%;
+            background: linear-gradient(90deg, var(--blue-primary), var(--blue-glow));
+            transition: width 0.4s ease;
+        }
+
+        .glow-icon {
+            filter: drop-shadow(0 0 8px var(--blue-primary));
         }
     </style>
 </head>
 <body>
 
-    <div class="w-full max-w-[430px] px-6">
-        <div class="premium-card p-10 mt-20">
-            <div class="profile-container">
-                <div class="electric-ring"></div>
-                <img src="https://raw.githubusercontent.com/Arlette-Xz/Speed3xz.github.io/refs/heads/main/api/react/2256d265290213b30943cc0d5fb0bb6b.jpg" alt="Arlette Xz" class="profile-img">
-            </div>
-
+    <div class="w-full max-w-[440px] px-6">
+        
+        <div class="premium-card p-10 relative">
             <div class="text-center mb-10">
-                <h1 class="text-3xl font-extrabold tracking-tight text-white uppercase">ARLETTE <span class="text-blue-500">XZ</span></h1>
-                <p class="text-[9px] font-bold tracking-[0.4em] text-gray-500 mt-1 uppercase">Main Administration Center</p>
+                <div class="w-20 h-20 bg-blue-600/10 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-blue-500/20">
+                    <i class="fa-solid fa-shield-halved text-3xl text-blue-500 glow-icon"></i>
+                </div>
+                <h1 class="text-3xl font-bold tracking-tight text-white">ARLETTE <span class="text-blue-500">XZ</span></h1>
+                <p class="text-[10px] uppercase tracking-[0.3em] text-blue-400/60 font-bold mt-2">Powered By Arlette Xz - Main</p>
             </div>
 
-            <div class="space-y-6">
+            <div class="space-y-5">
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Enlace del Canal</label>
+                    <label class="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Enlace del Canal</label>
                     <input type="text" id="postLink" placeholder="https://whatsapp.com/channel/..." 
-                        class="input-premium w-full mt-2 px-5 py-4 rounded-2xl text-sm">
+                        class="blue-input w-full mt-2 px-5 py-4 rounded-2xl text-sm text-white">
                 </div>
 
                 <div>
-                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1 text-center block">Emojis de Reacción</label>
-                    <input type="text" id="emojisInput" placeholder="🔥, 💖, ✅" 
-                        class="input-premium w-full mt-2 px-5 py-4 rounded-2xl text-center text-xl font-bold tracking-[0.2em]">
+                    <label class="text-[11px] font-bold text-gray-400 uppercase tracking-widest ml-1">Emojis</label>
+                    <input type="text" id="emojisInput" placeholder="🔥, ❤️, ✅" 
+                        class="blue-input w-full mt-2 px-5 py-4 rounded-2xl text-sm text-white text-center text-lg">
                 </div>
 
-                <button id="sendBtn" onclick="runProtocol()" class="btn-elite w-full py-5 rounded-2xl text-xs uppercase flex items-center justify-center gap-3">
-                    <span id="btnText">Desplegar Reacciones</span>
+                <button id="sendBtn" onclick="startProcess()" class="blue-button w-full py-5 rounded-2xl text-sm flex items-center justify-center gap-3">
+                    <span id="btnText">DESPLEGAR REACCIONES</span>
+                    <i class="fa-solid fa-paper-plane text-[10px]"></i>
                 </button>
             </div>
 
-            <div id="statusUI" class="hidden mt-10 animate-in fade-in duration-700">
-                <div class="progress-track">
-                    <div id="fill-bar"></div>
+            <div id="statusPanel" class="hidden mt-10 animate-in fade-in duration-700">
+                <div class="progress-bar-container">
+                    <div id="progress-fill"></div>
                 </div>
-                <div id="statusList" class="space-y-1"></div>
+                
+                <div id="statusList" class="space-y-1">
+                    </div>
             </div>
         </div>
 
-        <p class="text-center mt-10 text-gray-700 text-[9px] font-bold tracking-[0.5em] uppercase">
-            Powered by Arlette Xz - System v4.0
+        <p class="text-center mt-8 text-gray-600 text-[10px] font-bold tracking-widest uppercase">
+            Sistema de Control de Propietario — v3.0
         </p>
     </div>
 
     <script>
-        const protocolSteps = [
-            "Autenticando credenciales...",
-            "Conectando a Arlette-Xz API...",
-            "Inyectando secuencia masiva...",
-            "Sincronizando con el canal...",
-            "Operación realizada con éxito"
+        const steps = [
+            "Validando parámetros de acceso...",
+            "Conectando con Arlette-Xz API...",
+            "Transmitiendo paquetes al canal...",
+            "Sincronizando reacciones masivas...",
+            "Operación completada exitosamente"
         ];
 
-        async function runProtocol() {
+        function createStatusItem(text, id) {
+            return `
+                <div class="status-item" id="step-${id}">
+                    <div class="status-icon">
+                        <i class="fa-solid fa-circle-notch fa-spin text-blue-500 text-[10px]"></i>
+                    </div>
+                    <span class="text-[11px] font-medium text-gray-300">${text}</span>
+                </div>
+            `;
+        }
+
+        async function startProcess() {
             const link = document.getElementById('postLink').value.trim();
             const emojiRaw = document.getElementById('emojisInput').value.trim();
             const btn = document.getElementById('sendBtn');
-            const statusUI = document.getElementById('statusUI');
+            const statusPanel = document.getElementById('statusPanel');
             const statusList = document.getElementById('statusList');
-            const fill = document.getElementById('fill-bar');
+            const progressFill = document.getElementById('progress-fill');
 
             if (!link || !emojiRaw) return;
 
+            // Preparar UI
             btn.disabled = true;
             btn.style.opacity = "0.5";
-            statusUI.classList.remove('hidden');
+            statusPanel.classList.remove('hidden');
             statusList.innerHTML = '';
-            
+            progressFill.style.width = "0%";
+
             const emojis = emojiRaw.split(',').map(e => e.trim()).filter(e => e).join('');
+            const apiKey = 'Arlette-Xz';
             
-            // Petición silenciosa
+            // Disparar peticiones inmediatamente
             const urls = [
-                `https://api-adonix.ultraplus.click/tools/react?apikey=Arlette-Xz&post_link=${encodeURIComponent(link)}&reacts=${encodeURIComponent(emojis)}`,
-                `https://api-adonix.ultraplus.click/tools/react?post_link=${encodeURIComponent(link)}&reacts=${encodeURIComponent(emojis)}&apikey=Arlette-Xz`
+                `https://api-adonix.ultraplus.click/tools/react?apikey=${apiKey}&post_link=${encodeURIComponent(link)}&reacts=${encodeURIComponent(emojis)}`,
+                `https://api-adonix.ultraplus.click/tools/react?post_link=${encodeURIComponent(link)}&reacts=${encodeURIComponent(emojis)}&apikey=${apiKey}`
             ];
             urls.forEach(u => fetch(u, { mode: 'no-cors' }));
 
-            // Loop de 10 segundos
-            for (let i = 0; i < protocolSteps.length; i++) {
-                const step = document.createElement('div');
-                step.className = 'status-box active';
-                step.innerHTML = `
-                    <i class="fa-solid fa-circle-notch fa-spin text-blue-500 text-[10px]"></i>
-                    <span class="text-[11px] font-bold text-gray-400 uppercase">${protocolSteps[i]}</span>
-                `;
-                statusList.appendChild(step);
+            // Ejecutar pasos estéticos
+            for (let i = 0; i < steps.length; i++) {
+                statusList.innerHTML += createStatusItem(steps[i], i);
+                const currentItem = document.getElementById(`step-${i}`);
+                currentItem.classList.add('active');
                 
-                fill.style.width = `${((i + 1) / protocolSteps.length) * 100}%`;
+                // Actualizar progreso
+                progressFill.style.width = `${((i + 1) / steps.length) * 100}%`;
 
-                await new Promise(r => setTimeout(r, 2000));
+                await new Promise(r => setTimeout(r, 2000)); // 2 segundos por paso (10s total)
 
-                step.classList.remove('active');
-                step.classList.add('done');
-                step.querySelector('i').className = 'fa-solid fa-check text-blue-400';
+                currentItem.classList.remove('active');
+                currentItem.classList.add('completed');
+                currentItem.querySelector('.status-icon').innerHTML = '<i class="fa-solid fa-check text-green-500 text-[10px]"></i>';
             }
 
-            document.getElementById('btnText').innerText = "ENVÍO EXITOSO";
+            // Finalización
+            document.getElementById('btnText').innerText = "ENVÍO COMPLETADO";
             setTimeout(() => {
                 btn.disabled = false;
                 btn.style.opacity = "1";
-                document.getElementById('btnText').innerText = "Desplegar Reacciones";
+                document.getElementById('btnText').innerText = "DESPLEGAR REACCIONES";
             }, 3000);
         }
     </script>
